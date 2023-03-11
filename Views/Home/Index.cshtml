@@ -1,0 +1,39 @@
+﻿@model IEnumerable<ThienASPMVC08032023.Models.Clip>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Valorant Clips</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<div class="mt-4">
+    <div class="row">
+        <div class="col-sm-6 col-lg-4">
+            @foreach (var clip in Model)
+            {
+                <div class="card">
+                    <a href="https://www.youtube.com/watch?v=@clip.Url">
+                        <img class='card-img-top'
+                         src='https://i3.ytimg.com/vi/@clip.Url/maxresdefault.jpg'
+                         alt="@clip.Url" />
+                    </a>
+                    <p class="card-text">TimeCreated : @clip.TimeCreated</p>
+                    <div class="card-body">
+                        <a href="@clip.Url">
+                            <h5 class="card-title">@clip.Name</h5>
+                        </a>
+                        <p class="card-text">Author: @clip.Author</p>
+                        <p class="card-text">
+                            Desctiption : @clip.Description
+                        </p>
+                    </div>
+                </div>
+            }
+            
+        </div>
+    </div>
+</div>
+            
