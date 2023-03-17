@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,7 @@ namespace ThienASPMVC08032023.Controllers
         }
 
         // GET: Clips
+        [Authorize]
         public async Task<IActionResult> Index(string searchString)
         {
             var clips = from c in _context.Clips
@@ -28,7 +30,7 @@ namespace ThienASPMVC08032023.Controllers
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                clips = clips.Where(c => c.Name.Contains(searchString));
+                clips = clips.Where(c => c.Name!.Contains(searchString));
                 TempData["success"] = $"results of search : {searchString}";
             }
             
@@ -163,7 +165,7 @@ namespace ThienASPMVC08032023.Controllers
             }
             
             await _context.SaveChangesAsync();
-            TempData["success"] = $"Deleted Clip {clip.Name} Successfully!";
+            TempData["success"] = $"Deleted Clip {clip?.Name} Successfully!";
             return RedirectToAction(nameof(Index));
         }
 

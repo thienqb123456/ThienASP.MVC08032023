@@ -17,7 +17,7 @@ namespace ThienASPMVC08032023.Controllers
             _dbcontext = dbContext;
         }
 
-        public IList<Clip> clips { get; set; }
+        public IList<Clip>? Clips { get; set; }
 
 
         public async Task<IActionResult> Index()
@@ -26,8 +26,8 @@ namespace ThienASPMVC08032023.Controllers
             {
                 return View(null);
             }
-            clips = await _dbcontext.Clips.ToListAsync();
-            return View(clips);
+            Clips = await _dbcontext.Clips.ToListAsync();
+            return View(Clips);
         }
 
         public IActionResult Privacy()

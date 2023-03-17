@@ -4,26 +4,24 @@
 
 namespace ThienASPMVC08032023.Migrations
 {
-    /// <inheritdoc />
-    public partial class addUrltoClipModel : Migration
+    public partial class addNamePropToModel : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "Url",
-                table: "Clips",
-                type: "nvarchar(max)",
+                name: "Name",
+                table: "AspNetUsers",
+                type: "nvarchar(20)",
+                maxLength: 20,
                 nullable: false,
                 defaultValue: "");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Url",
-                table: "Clips");
+                name: "Name",
+                table: "AspNetUsers");
         }
     }
 }
