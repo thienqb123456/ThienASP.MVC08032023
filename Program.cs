@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using ThienASPMVC08032023.Database;
 using ThienASPMVC08032023.Models;
+using ThienASPMVC08032023.Services;
 
 namespace ThienASPMVC08032023
 {
@@ -16,12 +18,16 @@ namespace ThienASPMVC08032023
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(
                 builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
             //Add Identity Services
 
-            builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = false)
+            builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<AppDbContext>();
 
             builder.Services.AddRazorPages();
+
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
+            builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
             builder.Services.Configure<IdentityOptions>(options =>
             {

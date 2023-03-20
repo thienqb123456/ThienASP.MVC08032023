@@ -6,12 +6,10 @@ namespace ThienASPMVC08032023.Models
 {
     public class AppUser : IdentityUser
     {
-        [Display(Name = "Name")]
-        [MaxLength(20)]
+        [PersonalData]
         public string? Name { get; set; }
 
-        [Column(TypeName = "nvarchar")]
-        [StringLength(100)]
+        [PersonalData]
         public string? HomeAddress { get; set; }
     }
 }
