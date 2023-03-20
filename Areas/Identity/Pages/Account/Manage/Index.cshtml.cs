@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ThienASPMVC08032023.Migrations;
 using ThienASPMVC08032023.Models;
 
 namespace ThienASPMVC08032023.Areas.Identity.Pages.Account.Manage
@@ -59,18 +60,31 @@ namespace ThienASPMVC08032023.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+
+            [Required]
+            [Display(Name = "Name")]
+            [MaxLength(20)]
+            public string Name { get; set; }
+
+
+
+            [Display(Name = "Home Address")]
+            [StringLength(50)]
+            public string HomeAddress { get; set; }
         }
 
         private async Task LoadAsync(AppUser user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-
             Username = userName;
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                Name = user.Name,
+                HomeAddress = user.HomeAddress,
+
             };
         }
 
@@ -109,6 +123,18 @@ namespace ThienASPMVC08032023.Areas.Identity.Pages.Account.Manage
                     StatusMessage = "Unexpected error when trying to set phone number.";
                     return RedirectToPage();
                 }
+
+                if (Input.Name != user.Name)
+                {
+                    user.Name = Input.Name;
+                }
+
+                if (Input.HomeAddress != user.HomeAddress)
+                {
+                    user.HomeAddress = Input.HomeAddress;
+                }
+
+                await _userManager.UpdateAsync(user);
             }
 
             await _signInManager.RefreshSignInAsync(user);

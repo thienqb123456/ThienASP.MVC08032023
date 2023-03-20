@@ -130,7 +130,9 @@ namespace ThienASPMVC08032023.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = CreateUser(); 
+                var user = CreateUser();
+                user.HomeAddress = Input.HomeAddress;
+                user.Name = Input.Name;
 
                 await _userStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
