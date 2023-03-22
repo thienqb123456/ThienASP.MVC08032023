@@ -1,0 +1,29 @@
+﻿@model List<IdentityRole>
+@{
+    ViewData["Title"] = "Role Manager";
+}
+
+<h3>@ViewData["Title"]</h3>
+
+<div class="mb-2">
+    <a class="btn btn-secondary" asp-action="Create">Tạo role mới</a>
+</div>
+
+<table class="table">
+    <tr>
+        <th>Role Name</th>
+        <th>Hanlder</th>
+    </tr>
+    @foreach (var role in Model)
+    {
+        <tr>
+            <td>
+                <p>@role.Name</p>
+            </td>
+            <td>
+                <a class="btn btn-success btn-sm" asp-action="Edit" asp-route-roleid="@role.Id">Cập nhật</a>
+                <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-roleid="@role.Id">Xóa</a>
+            </td>
+        </tr>
+    }
+</table>

@@ -7,11 +7,11 @@ namespace ThienASPMVC08032023.Models
         [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage ="bắt buộc nhập")]
+        [Required]
         [Display(Name = "Clip title")]
         public string? Name { get; set; }
 
-        [Required(ErrorMessage = "bat buoc nhap")]
+        [Required]
         [Display(Name = "Clip Author")]
         public string? Author { get; set; }
 

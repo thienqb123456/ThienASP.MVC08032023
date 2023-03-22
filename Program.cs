@@ -22,7 +22,8 @@ namespace ThienASPMVC08032023
             //Add Identity Services
 
             builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<AppDbContext>();
+                            .AddRoles<IdentityRole>()
+                            .AddEntityFrameworkStores<AppDbContext>();
 
             builder.Services.AddRazorPages();
 

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,17 +14,24 @@ using ThienASPMVC08032023.Models;
 
 namespace ThienASPMVC08032023.Controllers
 {
+    [Authorize]
+    [Route("/ClipVLR/[action]")]
     public class ClipsController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<ClipsController> _logger;
+        private readonly UserManager<AppUser> _userManager;
 
-        public ClipsController(AppDbContext context)
+        public ClipsController(AppDbContext context, ILogger<ClipsController> logger, UserManager<AppUser> userManager)
         {
             _context = context;
+            _logger = logger;
+            _userManager = userManager;
+
         }
 
+
         // GET: Clips
-        [Authorize]
         public async Task<IActionResult> Index(string searchString)
         {
             var clips = from c in _context.Clips
@@ -55,10 +65,24 @@ namespace ThienASPMVC08032023.Controllers
             return View(clip);
         }
 
+        [Authorize]
         // GET: Clips/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var clip = new Clip
+            {
+
+                Author = user.Name
+            };
+            // ViewBag.currentUser = user.Name;
+
+            return View(clip);
         }
 
         // POST: Clips/Create
