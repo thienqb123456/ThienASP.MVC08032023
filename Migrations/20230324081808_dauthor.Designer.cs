@@ -12,8 +12,8 @@ using ThienASPMVC08032023.Database;
 namespace ThienASPMVC08032023.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230320051857_CustomUserDataAttribute")]
-    partial class CustomUserDataAttribute
+    [Migration("20230324081808_dauthor")]
+    partial class dauthor
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -240,9 +240,8 @@ namespace ThienASPMVC08032023.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Author")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -260,6 +259,8 @@ namespace ThienASPMVC08032023.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
 
                     b.ToTable("Clips");
                 });
@@ -313,6 +314,15 @@ namespace ThienASPMVC08032023.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ThienASPMVC08032023.Models.Clip", b =>
+                {
+                    b.HasOne("ThienASPMVC08032023.Models.AppUser", "AuthorUser")
+                        .WithMany()
+                        .HasForeignKey("AuthorId");
+
+                    b.Navigation("AuthorUser");
                 });
 #pragma warning restore 612, 618
         }

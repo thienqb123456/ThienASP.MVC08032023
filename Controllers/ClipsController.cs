@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ThienASPMVC08032023.Database;
 using ThienASPMVC08032023.Models;
+using X.PagedList;
 
 namespace ThienASPMVC08032023.Controllers
 {
@@ -22,6 +23,9 @@ namespace ThienASPMVC08032023.Controllers
         private readonly ILogger<ClipsController> _logger;
         private readonly UserManager<AppUser> _userManager;
 
+        [TempData]
+        public string StatusMessage { get; set; }
+
         public ClipsController(AppDbContext context, ILogger<ClipsController> logger, UserManager<AppUser> userManager)
         {
             _context = context;
@@ -32,19 +36,31 @@ namespace ThienASPMVC08032023.Controllers
 
 
         // GET: Clips
-        public async Task<IActionResult> Index(string searchString)
+        public IActionResult Index(string searchString,int? currentPage, int? pageSize)
         {
-            var clips = from c in _context.Clips
-                        select c;
 
+             var clips = from c in _context.Clips
+                        select c;
 
             if (!string.IsNullOrEmpty(searchString))
             {
                 clips = clips.Where(c => c.Name!.Contains(searchString));
-                TempData["success"] = $"results of search : {searchString}";
+                StatusMessage = $"results of search : {searchString}";
             }
-            
-             return View(await clips.ToListAsync());
+
+            //pagedlist
+            if (currentPage == null)
+            {
+                currentPage = 1;
+            }
+
+            if (pageSize == null)
+            {
+                pageSize = 5;
+            }
+
+
+            return View(clips.ToPagedList((int)currentPage, (int)pageSize));
         }
 
         // GET: Clips/Details/5
@@ -65,24 +81,10 @@ namespace ThienASPMVC08032023.Controllers
             return View(clip);
         }
 
-        [Authorize]
         // GET: Clips/Create
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-
-            var clip = new Clip
-            {
-
-                Author = user.Name
-            };
-            // ViewBag.currentUser = user.Name;
-
-            return View(clip);
+            return View();
         }
 
         // POST: Clips/Create
@@ -90,18 +92,25 @@ namespace ThienASPMVC08032023.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Author,Description,Url,TimeCreated")] Clip clip)
+        public async Task<IActionResult> Create([Bind("Id,Name,AuthorId,Description,Url,TimeCreated,AuthorId,AuthorUsername")] Clip clip)
         {
+            var currentUser = await _userManager.GetUserAsync(User); 
+                
+            clip.AuthorId = currentUser.Id;
+            clip.AuthorUsername = currentUser.UserName;
+
+            
             if (ModelState.IsValid)
-            {
+            { 
                 _context.Add(clip);
                 await _context.SaveChangesAsync();
 
-                TempData["success"] = $"Created Clip name :  {clip.Name} Successfully!";
+                StatusMessage = $"Created Clip name :  {clip.Name} Successfully!";
                 return RedirectToAction(nameof(Index));
             }
             return View(clip);
         }
+       
 
         // GET: Clips/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -124,7 +133,7 @@ namespace ThienASPMVC08032023.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Author,Description,Url,TimeCreated")] Clip clip)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Url,TimeCreated,AuthorId")] Clip clip)
         {
             if (id != clip.Id)
             {
@@ -137,7 +146,7 @@ namespace ThienASPMVC08032023.Controllers
                 {
                     _context.Update(clip);
                     await _context.SaveChangesAsync();
-                    TempData["success"] = $"Edited Clip name : {clip.Name} Successfully!";
+                    StatusMessage = $"Edited Clip name : {clip.Name} Successfully!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -189,7 +198,7 @@ namespace ThienASPMVC08032023.Controllers
             }
             
             await _context.SaveChangesAsync();
-            TempData["success"] = $"Deleted Clip {clip?.Name} Successfully!";
+            StatusMessage = $"Deleted Clip {clip?.Name} Successfully!";
             return RedirectToAction(nameof(Index));
         }
 

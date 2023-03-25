@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ThienASPMVC08032023.Models
 {
@@ -11,9 +14,12 @@ namespace ThienASPMVC08032023.Models
         [Display(Name = "Clip title")]
         public string? Name { get; set; }
 
-        [Required]
-        [Display(Name = "Clip Author")]
-        public string? Author { get; set; }
+        public string? AuthorId { get; set; }
+
+        [ForeignKey("AuthorId")]
+        public AppUser? AuthorUser { get; set; }
+
+        public string? AuthorUsername { get; set; }
 
         [Required]
         public string? Description { get; set; }
@@ -21,6 +27,6 @@ namespace ThienASPMVC08032023.Models
         [Required]
         public string? Url { get; set; }
 
-        public DateTime TimeCreated { get; set; } = DateTime.Now;
+        public DateTime TimeCreated { get; set; } = DateTime.Now;   
     }
 }
