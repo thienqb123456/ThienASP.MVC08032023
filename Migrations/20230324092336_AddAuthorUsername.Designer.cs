@@ -12,8 +12,8 @@ using ThienASPMVC08032023.Database;
 namespace ThienASPMVC08032023.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230317090807_addNamePropToModel")]
-    partial class addNamePropToModel
+    [Migration("20230324092336_AddAuthorUsername")]
+    partial class AddAuthorUsername
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -181,8 +181,7 @@ namespace ThienASPMVC08032023.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("HomeAddress")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -191,9 +190,7 @@ namespace ThienASPMVC08032023.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -243,8 +240,10 @@ namespace ThienASPMVC08032023.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Author")
-                        .IsRequired()
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AuthorUsername")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
@@ -263,6 +262,8 @@ namespace ThienASPMVC08032023.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
 
                     b.ToTable("Clips");
                 });
@@ -316,6 +317,15 @@ namespace ThienASPMVC08032023.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ThienASPMVC08032023.Models.Clip", b =>
+                {
+                    b.HasOne("ThienASPMVC08032023.Models.AppUser", "AuthorUser")
+                        .WithMany()
+                        .HasForeignKey("AuthorId");
+
+                    b.Navigation("AuthorUser");
                 });
 #pragma warning restore 612, 618
         }

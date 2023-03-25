@@ -1,11 +1,14 @@
-﻿@model IEnumerable<ThienASPMVC08032023.Models.Clip>
+﻿@model IPagedList<ThienASPMVC08032023.Models.Clip>
+@using X.PagedList;
+@using X.PagedList.Mvc.Core;
 
 @{
     ViewData["Title"] = "Clips Manager";
 }
 
-<partial name="_NotificationTempData"></partial>
-<h1>@ViewData["Title"]</h1>
+<partial name="_StatusMessage"></partial>
+
+<h1>Clips Manager</h1>
 
 <nav class="navbar navbar-light bg-light">
     <form asp-controller = "Clips" asp-action= "Index" class="form-inline">
@@ -21,19 +24,22 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Author)
+                AuthorId
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                AuthorUsername
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Url)
+                Description
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TimeCreated)
+                Url
+            </th>
+            <th>
+                TimeCreated
             </th>
             <th></th>
         </tr>
@@ -45,7 +51,10 @@
                     @Html.DisplayFor(modelItem => clip.Name)
             </td>
             <td>
-                    @Html.DisplayFor(modelItem => clip.Author)
+                    @clip.AuthorId
+            </td>
+            <td>
+                    @clip.AuthorUsername
             </td>
             <td>
                     @Html.DisplayFor(modelItem => clip.Description)
@@ -65,3 +74,17 @@
 }
     </tbody>
 </table>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+
+@Html.PagedListPager(Model , currentPage => Url.Action("Index",
+        new { currentPage }),
+        new PagedListRenderOptions {
+            LiElementClasses = new string[] {"page-item"},
+            PageClasses = new string[] {"page-link"}
+        } )

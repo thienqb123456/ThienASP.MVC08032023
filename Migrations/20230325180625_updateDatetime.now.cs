@@ -4,7 +4,7 @@
 
 namespace ThienASPMVC08032023.Migrations
 {
-    public partial class currentUserToView : Migration
+    public partial class updateDatetimenow : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

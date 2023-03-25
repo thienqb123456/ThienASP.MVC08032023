@@ -4,24 +4,22 @@
 
 namespace ThienASPMVC08032023.Migrations
 {
-    public partial class addNamePropToModel : Migration
+    public partial class AddAuthorUsername : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "Name",
-                table: "AspNetUsers",
-                type: "nvarchar(20)",
-                maxLength: 20,
-                nullable: false,
-                defaultValue: "");
+                name: "AuthorUsername",
+                table: "Clips",
+                type: "nvarchar(max)",
+                nullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Name",
-                table: "AspNetUsers");
+                name: "AuthorUsername",
+                table: "Clips");
         }
     }
 }

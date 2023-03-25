@@ -6,10 +6,10 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using ThienASPMVC08032023.Migrations;
 using ThienASPMVC08032023.Models;
 
 namespace ThienASPMVC08032023.Areas.Identity.Pages.Account.Manage
@@ -27,6 +27,7 @@ namespace ThienASPMVC08032023.Areas.Identity.Pages.Account.Manage
             _signInManager = signInManager;
         }
 
+        
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -124,18 +125,21 @@ namespace ThienASPMVC08032023.Areas.Identity.Pages.Account.Manage
                     return RedirectToPage();
                 }
 
-                if (Input.Name != user.Name)
-                {
-                    user.Name = Input.Name;
-                }
-
-                if (Input.HomeAddress != user.HomeAddress)
-                {
-                    user.HomeAddress = Input.HomeAddress;
-                }
-
-                await _userManager.UpdateAsync(user);
+                
             }
+
+            if (Input.Name != user.Name)
+            {
+                user.Name = Input.Name;
+                
+            }
+
+            if (Input.HomeAddress != user.HomeAddress)
+            {
+                user.HomeAddress = Input.HomeAddress;
+            }
+
+            await _userManager.UpdateAsync(user);
 
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
