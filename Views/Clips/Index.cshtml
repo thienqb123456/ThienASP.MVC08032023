@@ -27,9 +27,6 @@
                 Name
             </th>
             <th>
-                AuthorId
-            </th>
-            <th>
                 AuthorUsername
             </th>
             <th>
@@ -48,22 +45,19 @@
 @foreach (var clip in Model) {
         <tr>
             <td>
-                    @Html.DisplayFor(modelItem => clip.Name)
-            </td>
-            <td>
-                    @clip.AuthorId
+                    @clip.Name
             </td>
             <td>
                     @clip.AuthorUsername
             </td>
             <td>
-                    @Html.DisplayFor(modelItem => clip.Description)
+                    @clip.Description
             </td>
             <td>
-                    @Html.DisplayFor(modelItem => clip.Url)
+                    @clip.Url
             </td>
             <td>
-                    @Html.DisplayFor(modelItem => clip.TimeCreated)
+                    @clip.TimeCreated
             </td>
             <td>
                     <a asp-action="Edit" asp-route-id="@clip.Id">Edit</a> |
