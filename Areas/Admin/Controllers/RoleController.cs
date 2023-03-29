@@ -8,7 +8,7 @@ using ThienASPMVC08032023.Models;
 namespace ThienASPMVC08032023.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Route("/Role/[action]")]
+    [Route("/Role/{action}")]
     public class RoleController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -40,10 +40,17 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
         // POST: RoleController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(IFormCollection collection,[Bind("Id,Name")] IdentityRole role )
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return NotFound();  
+                }
+
+                var result = await _roleManager.CreateAsync(role);
+ 
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -52,19 +59,32 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
             }
         }
 
-        // GET: RoleController/Edit/5
-        public ActionResult Edit(int id)
+        // GET: RoleController/Edit/roleid=
+        public async Task<ActionResult> Edit(string roleid)
         {
-            return View();
+            var role = await _roleManager.FindByIdAsync(roleid);
+            if  (role == null)
+            {
+                return NotFound("role not found");
+            }
+            return View(role);
         }
 
-        // POST: RoleController/Edit/5
+        // POST: RoleController/Edit/roleid=
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(string roleid, [Bind("Name")]IdentityRole role)
         {
             try
             {
+                
+                if (ModelState.IsValid)
+                {
+                    role = await _roleManager.FindByIdAsync(roleid);
+                    await _roleManager.UpdateAsync(role);
+                }
+                
+
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -74,18 +94,28 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
         }
 
         // GET: RoleController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(string roleid)
         {
-            return View();
+            var role = await _roleManager.FindByIdAsync(roleid);
+            return View(role);
         }
 
         // POST: RoleController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(string roleid, IdentityRole role )
         {
             try
             {
+                role = await _roleManager.FindByIdAsync(roleid);
+                if (role == null) 
+                { 
+                    return NotFound("role not found"); 
+                }
+                
+                await _roleManager.DeleteAsync(role);
+                
+
                 return RedirectToAction(nameof(Index));
             }
             catch

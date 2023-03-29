@@ -16,7 +16,7 @@ using X.PagedList;
 namespace ThienASPMVC08032023.Controllers
 {
     [Authorize]
-    [Route("/ClipVLR/[action]")]
+    [Route("/Clips/[action]/")]
     public class ClipsController : Controller
     {
         private readonly AppDbContext _context;
@@ -36,6 +36,7 @@ namespace ThienASPMVC08032023.Controllers
 
 
         // GET: Clips
+        
         public IActionResult Index(string searchString,int? currentPage, int? pageSize)
         {
 
@@ -56,7 +57,7 @@ namespace ThienASPMVC08032023.Controllers
 
             if (pageSize == null)
             {
-                pageSize = 5;
+                pageSize = 10;
             }
 
 
@@ -92,16 +93,15 @@ namespace ThienASPMVC08032023.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,AuthorId,Description,Url,TimeCreated,AuthorId,AuthorUsername")] Clip clip)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,Url,TimeCreated,AuthorId,AuthorUsername")] Clip clip)
         {
-            var currentUser = await _userManager.GetUserAsync(User); 
-                
+            AppUser currentUser = await _userManager.GetUserAsync(User);
             clip.AuthorId = currentUser.Id;
             clip.AuthorUsername = currentUser.UserName;
 
-            
             if (ModelState.IsValid)
-            { 
+            {
+               
                 _context.Add(clip);
                 await _context.SaveChangesAsync();
 
@@ -133,8 +133,10 @@ namespace ThienASPMVC08032023.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Url,TimeCreated,AuthorId")] Clip clip)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Url,TimeCreated")] Clip clip)
         {
+            
+
             if (id != clip.Id)
             {
                 return NotFound();
@@ -144,6 +146,10 @@ namespace ThienASPMVC08032023.Controllers
             {
                 try
                 {
+                    AppUser currentUser = await _userManager.GetUserAsync(User);
+                    clip.AuthorId = currentUser.Id;
+                    clip.AuthorUsername = currentUser.UserName;
+
                     _context.Update(clip);
                     await _context.SaveChangesAsync();
                     StatusMessage = $"Edited Clip name : {clip.Name} Successfully!";

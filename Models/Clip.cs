@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -14,6 +13,7 @@ namespace ThienASPMVC08032023.Models
         [Display(Name = "Clip title")]
         public string? Name { get; set; }
 
+        
         public string? AuthorId { get; set; }
 
         [ForeignKey("AuthorId")]

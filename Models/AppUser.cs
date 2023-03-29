@@ -11,5 +11,6 @@ namespace ThienASPMVC08032023.Models
 
         [PersonalData]
         public string? HomeAddress { get; set; }
+
     }
 }

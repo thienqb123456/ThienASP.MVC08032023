@@ -60,7 +60,7 @@ namespace ThienASPMVC08032023
             {
                 options.LoginPath = "/login/";
                 options.LogoutPath = "/logout/";
-                options.AccessDeniedPath = "/AccessDenied";
+                options.AccessDeniedPath = "/AccessDenied/";
             });
 
 
