@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using ThienASPMVC08032023.Areas.Admin.Models.User;
 using ThienASPMVC08032023.Models;
 using X.PagedList;
 
@@ -14,15 +17,18 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager; 
         private readonly ILogger<UserController> _logger;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ILogger<UserController> logger)
+        public UserController(RoleManager<IdentityRole> roleManager,UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ILogger<UserController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _roleManager = roleManager;
         }
 
-
+        [TempData]
+        public string StatusMessage { get; set; }
 
 
 
@@ -38,7 +44,7 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
              
             if (pageSize == null)
             {
-                pageSize = 5;
+                pageSize = 10;
             }
 
             
@@ -52,40 +58,77 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
             return View();
         }
 
+
         // GET: UserController/Create
-        public ActionResult Create()
+        public async Task<ActionResult> SetRoleUser(string userId)
         {
-            return View();
+            var SetRoleUserModel = new SetRoleUserModel();
+
+
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return NotFound(" not found userId ");
+            }
+            SetRoleUserModel.User = await _userManager.FindByIdAsync(userId);
+
+            SetRoleUserModel.RolesUser = await _userManager.GetRolesAsync(SetRoleUserModel.User);
+            
+            List<IdentityRole> roles = _roleManager.Roles.ToList();
+            IEnumerable<string> allRolesName = roles.Select(r => r.Name).ToList();
+
+            ViewBag.allRolesName = new SelectList(allRolesName);
+            return View(SetRoleUserModel);
         }
+
 
         // POST: UserController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> SetRoleUser(string userId, [Bind("RolesUser,User")]SetRoleUserModel SetRoleUserModel)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+                List<IdentityRole> roles = _roleManager.Roles.ToList();
+                IEnumerable<string> allRolesName = roles.Select(roles => roles.Name);
 
-        // GET: UserController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
+                ViewBag.allRolesName = new SelectList(allRolesName);
 
-        // POST: UserController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return NotFound("not found userId");
+                }
+
+                SetRoleUserModel.User = await _userManager.FindByIdAsync(userId);
+                if (SetRoleUserModel.User == null)
+                {
+                    return NotFound($"not found user, id = {userId}");
+                }
+
+                IList<string> currentRolesUser = await _userManager.GetRolesAsync(SetRoleUserModel.User);
+
+                IEnumerable<string> deleteRolesUser = currentRolesUser.Where(role => !SetRoleUserModel.RolesUser.Contains(role));
+
+                IEnumerable<string> AddRolesUser = SetRoleUserModel.RolesUser.Where(role => !currentRolesUser.Contains(role));
+
+                var resultDeleteRolesUser = await _userManager.RemoveFromRolesAsync(SetRoleUserModel.User, deleteRolesUser);
+
+                if (!resultDeleteRolesUser.Succeeded)
+                {
+                    return NotFound("Delete Roles Fail");
+                }
+
+                var resultAddRolesUser = await _userManager.AddToRolesAsync(SetRoleUserModel.User, AddRolesUser);
+
+                if (!resultAddRolesUser.Succeeded)
+                {
+                    return NotFound("Add Roles Fail");
+
+                }
+
+                StatusMessage = $" Added roles for user: {SetRoleUserModel.User.UserName}";
+
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -103,10 +146,30 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
         // POST: UserController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(string userId)
         {
             try
             {
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return NotFound("Not Found userId");
+                }
+
+                var user = await _userManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    return NotFound("Not Found User");
+                }
+
+                var deleteResult = await _userManager.DeleteAsync(user);
+
+                if (deleteResult.Succeeded)
+                {
+                    StatusMessage = $"Deleted user : {user.UserName} successfully!";
+
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             catch

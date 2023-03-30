@@ -24,7 +24,7 @@ namespace ThienASPMVC08032023.Controllers
         private readonly UserManager<AppUser> _userManager;
 
         [TempData]
-        public string StatusMessage { get; set; }
+        public string? StatusMessage { get; set; }
 
         public ClipsController(AppDbContext context, ILogger<ClipsController> logger, UserManager<AppUser> userManager)
         {
@@ -95,13 +95,14 @@ namespace ThienASPMVC08032023.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,Url,TimeCreated,AuthorId,AuthorUsername")] Clip clip)
         {
-            AppUser currentUser = await _userManager.GetUserAsync(User);
-            clip.AuthorId = currentUser.Id;
-            clip.AuthorUsername = currentUser.UserName;
+            
 
             if (ModelState.IsValid)
             {
-               
+                AppUser currentUser = await _userManager.GetUserAsync(User);
+                clip.AuthorId = currentUser.Id;
+                clip.AuthorUsername = currentUser.UserName;
+
                 _context.Add(clip);
                 await _context.SaveChangesAsync();
 
@@ -210,7 +211,7 @@ namespace ThienASPMVC08032023.Controllers
 
         private bool ClipExists(int id)
         {
-          return _context.Clips.Any(e => e.Id == id);
+          return _context.Clips!.Any(e => e.Id == id);
         }
     }
 }

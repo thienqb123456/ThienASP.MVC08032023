@@ -44,4 +44,8 @@
     <PackageReference Include="X.PagedList.Mvc.Core" Version="9.0.0-prerelease" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Admin\Models\Role\" />
+  </ItemGroup>
+
 </Project>

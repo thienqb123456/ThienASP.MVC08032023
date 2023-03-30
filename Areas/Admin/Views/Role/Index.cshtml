@@ -3,10 +3,16 @@
     ViewData["Title"] = "Role Manager";
 }
 
+
+
+
 <h3>@ViewData["Title"]</h3>
 
+<partial name="_StatusMessage" />
+
+
 <div class="mb-2">
-    <a class="btn btn-secondary" asp-action="Create">Tạo role mới</a>
+    <a class="btn btn-secondary" asp-action="Create">Create a new role</a>
 </div>
 
 <table class="table">

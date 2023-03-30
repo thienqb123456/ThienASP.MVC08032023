@@ -5,9 +5,9 @@
 @{
     ViewData["Title"] = "User Manager";
 }
-
 <h2>@ViewData["Title"] </h2>
 
+<partial name="_StatusMessage">
 
 <table class="table">
     <tr>
@@ -38,8 +38,9 @@
             </td>
 
             <td>
-                <a class="btn btn-success btn-sm" asp-action="Edit" asp-route-roleid="@user.Id">Edit</a>
-                <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-roleid="@user.Id">Delete</a>
+                <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-userId="@user.Id">Delete User</a>
+                <a class="btn btn-info btn-sm" asp-action="SetRoleUser" asp-route-userId="@user.Id">Set Role</a>
+
             </td>
         </tr>
     }

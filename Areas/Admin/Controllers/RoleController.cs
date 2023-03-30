@@ -24,6 +24,10 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
             _context = context;
         }
 
+        [TempData]
+        public string? StatusMessage { get; set; }
+
+
         // GET: RoleController
         public async Task<IActionResult> Index()
         {
@@ -40,7 +44,7 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
         // POST: RoleController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(IFormCollection collection,[Bind("Id,Name")] IdentityRole role )
+        public async Task<ActionResult> Create([Bind("Id,Name")] IdentityRole role )
         {
             try
             {
@@ -50,7 +54,12 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
                 }
 
                 var result = await _roleManager.CreateAsync(role);
- 
+                if (result.Succeeded)
+                {
+                    StatusMessage = $"Created a role named : {role.Name} successfully ";
+
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -93,29 +102,46 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
             }
         }
 
+
         // GET: RoleController/Delete/5
         public async Task<ActionResult> Delete(string roleid)
         {
+            if (string.IsNullOrEmpty(roleid))
+            {
+                return NotFound("Not Found roleid");
+            }
             var role = await _roleManager.FindByIdAsync(roleid);
+            if (role == null)
+            {
+                return NotFound("not found role");
+            }
             return View(role);
         }
 
         // POST: RoleController/Delete/5
-        [HttpPost]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(string roleid, IdentityRole role )
+        public async Task<ActionResult> DeleteConfirmed(string roleid)
         {
             try
             {
-                role = await _roleManager.FindByIdAsync(roleid);
+                if (string.IsNullOrEmpty(roleid))
+                {
+                    return NotFound("not found roleid");
+                }
+
+                var role = await _roleManager.FindByIdAsync(roleid);
                 if (role == null) 
                 { 
                     return NotFound("role not found"); 
                 }
                 
-                await _roleManager.DeleteAsync(role);
+                var deleteResult = await _roleManager.DeleteAsync(role);
+                if (deleteResult.Succeeded)
+                {
+                    StatusMessage = $"Deleted role named : {role.Name} successfully ";
+                }
                 
-
                 return RedirectToAction(nameof(Index));
             }
             catch

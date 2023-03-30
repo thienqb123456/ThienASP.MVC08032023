@@ -1,0 +1,19 @@
+﻿@using ThienASPMVC08032023.Models;
+@model AppUser
+@{
+    ViewData["Title"] = "Delete User";
+}
+
+<h3>@ViewData["Title"]</h3>
+
+<hr />
+<h3>Are you sure you want to delete <strong class="btn-danger"></strong> User  ?</h3>
+<div>
+    <hr />
+
+    <form method="post">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>
