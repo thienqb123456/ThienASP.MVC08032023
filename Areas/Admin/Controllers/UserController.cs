@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -10,6 +11,7 @@ using X.PagedList;
 
 namespace ThienASPMVC08032023.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "admin,manager")]
     [Area("Admin")]
     [Route("/User/{Action}")]
     public class UserController : Controller
@@ -59,7 +61,7 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
         }
 
 
-        // GET: UserController/Create
+        // GET: UserController/SetRoleUser
         public async Task<ActionResult> SetRoleUser(string userId)
         {
             var SetRoleUserModel = new SetRoleUserModel();
@@ -138,15 +140,27 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
         }
 
         // GET: UserController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(string userId)
         {
-            return View();
+            if (string.IsNullOrEmpty(userId))
+            {
+                return NotFound("Not found userId");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);   
+
+            if (user == null)
+            {
+                return NotFound("not found user");
+            }
+
+            return View(user);
         }
 
         // POST: UserController/Delete/5
-        [HttpPost]
+        [HttpPost,ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(string userId)
+        public async Task<ActionResult> DeleteConfirmed(string userId)
         {
             try
             {
