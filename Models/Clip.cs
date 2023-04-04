@@ -27,6 +27,8 @@ namespace ThienASPMVC08032023.Models
         [Required]
         public string? Url { get; set; }
 
+        public List<Comment>? Comments { get; set; }
+
         public DateTime TimeCreated { get; set; } = DateTime.Now;   
     }
 }

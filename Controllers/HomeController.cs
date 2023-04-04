@@ -9,25 +9,44 @@ namespace ThienASPMVC08032023.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly AppDbContext _dbcontext;
+        private readonly AppDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger, AppDbContext dbContext)
+        public HomeController(ILogger<HomeController> logger, AppDbContext context)
         {
             _logger = logger;
-            _dbcontext = dbContext;
+            _context = context;
         }
-
-        public IList<Clip>? Clips { get; set; }
-
 
         public async Task<IActionResult> Index()
         {
-            if (_dbcontext.Clips == null)
+            if (_context.Clips == null)
             {
-                return View(null);
+                return NotFound("Not Found any Clip in DB");
             }
-            Clips = await _dbcontext.Clips.ToListAsync();
-            return View(Clips);
+            var clips = await _context.Clips.ToListAsync();
+            return View(clips);
+        }
+
+
+
+        public async Task<ActionResult> Detail(int? id)
+        {
+            if (id == 0 || id == null)
+            {
+                return NotFound("Not found id ");
+            }
+            if (_context.Clips == null)
+            {
+                return NotFound("Not found any clip in DB");
+            }
+            var clip = await _context.Clips.FirstOrDefaultAsync(c => c.Id == id);
+
+            if (clip == null)
+            {
+                return NotFound($"Not found clip has id = {id}");
+            }
+
+            return View(clip);
         }
 
         public IActionResult Privacy()

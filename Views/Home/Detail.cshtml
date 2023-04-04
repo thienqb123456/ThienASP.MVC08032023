@@ -1,0 +1,42 @@
+﻿@model Clip
+@{
+
+}
+
+<h1> Clip : @Model.Name </h1>
+
+<div class="mt-4">
+    <div class="row">
+        <div class="card">
+            <iframe width=" 560" height="315" src="https://www.youtube.com/embed/@Model.Url"
+                    title="YouTube video player" frameborder="0" allow="accelerometer;
+                            autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;
+                            web-share" allowfullscreen>
+            </iframe>
+            <p class="card-text">TimeCreated : @Model.TimeCreated</p>
+            <div class="card-body">
+                <h5 class="card-title">@Model.Name</h5>
+                <p class="card-text">Author: @Model.AuthorUsername</p>
+                <p class="card-text">  Description : @Model.Description </p>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div id="comment-section">
+    </div>
+
+
+
+
+</div>
+
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

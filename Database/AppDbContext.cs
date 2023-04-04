@@ -11,5 +11,6 @@ namespace ThienASPMVC08032023.Database
         }
 
         public DbSet<Clip>? Clips { get; set; }
+        public DbSet<Comment>? Comments { get; set; }
     }
 }

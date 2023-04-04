@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ThienASPMVC08032023.Database;
 
@@ -11,9 +12,10 @@ using ThienASPMVC08032023.Database;
 namespace ThienASPMVC08032023.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230404124714_addCommentModeltoDb")]
+    partial class addCommentModeltoDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -274,9 +276,6 @@ namespace ThienASPMVC08032023.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("ClipId")
-                        .HasColumnType("int");
-
                     b.Property<string>("CommentMsg")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -285,8 +284,6 @@ namespace ThienASPMVC08032023.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ClipId");
 
                     b.ToTable("Comments");
                 });
@@ -349,18 +346,6 @@ namespace ThienASPMVC08032023.Migrations
                         .HasForeignKey("AuthorId");
 
                     b.Navigation("AuthorUser");
-                });
-
-            modelBuilder.Entity("ThienASPMVC08032023.Models.Comment", b =>
-                {
-                    b.HasOne("ThienASPMVC08032023.Models.Clip", null)
-                        .WithMany("Comments")
-                        .HasForeignKey("ClipId");
-                });
-
-            modelBuilder.Entity("ThienASPMVC08032023.Models.Clip", b =>
-                {
-                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }
