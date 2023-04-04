@@ -1,7 +1,5 @@
-﻿@model IEnumerable<ThienASPMVC08032023.Models.Clip>
-
+﻿@model List<Clip>
 @{
-    ViewData["Title"] = "Index";
 }
 
 <h1>Valorant Clips</h1>
@@ -12,25 +10,38 @@
             @foreach (var clip in Model)
             {
                 <div class="card">
-                    <a href="https://www.youtube.com/watch?v=@clip.Url">
+                    <a asp-action="Detail" asp-route-id="@clip.Id">
                         <img class='card-img-top'
-                         src='https://i3.ytimg.com/vi/@clip.Url/maxresdefault.jpg'
-                         alt="@clip.Url" />
+                             src='https://i3.ytimg.com/vi/@clip.Url/maxresdefault.jpg'
+                             alt="@clip.Url" />
                     </a>
                     <p class="card-text">TimeCreated : @clip.TimeCreated</p>
                     <div class="card-body">
-                        <a href="@clip.Url">
-                            <h5 class="card-title">@clip.Name</h5>
-                        </a>
+                        <h5>
+                            <a asp-action="Detail" asp-route-id="@clip.Id"> @clip.Name</a>
+
+                        </h5>
+
                         <p class="card-text">Author: @clip.AuthorUsername</p>
                         <p class="card-text">
-                            Desctiption : @clip.Description
+                            Description : @clip.Description
                         </p>
+
+                        <a class="btn btn-info" asp-action="Detail" asp-route-Id="@clip.Id"> Watch Details</a>
+
                     </div>
+
                 </div>
             }
-            
+
         </div>
     </div>
 </div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
             
