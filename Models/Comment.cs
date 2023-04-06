@@ -10,6 +10,12 @@ namespace ThienASPMVC08032023.Models
         [Required]
         public string? CommentMsg { get; set; }
 
-        public DateTime TimeCreated { get; set; }
+        public string? UserName { get; set; }
+
+
+        [Required]
+        public AppUser? User { get; set; }
+
+        public DateTime TimeCreated { get; set; } = DateTime.Now;
     }
 }

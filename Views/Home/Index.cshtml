@@ -18,25 +18,18 @@
                     <p class="card-text">TimeCreated : @clip.TimeCreated</p>
                     <div class="card-body">
                         <h5>
-                            <a asp-action="Detail" asp-route-id="@clip.Id"> @clip.Name</a>
-
+                            <a class="text-decoration-none" asp-action="Detail" asp-route-id="@clip.Id"> @clip.Name</a>
                         </h5>
-
                         <p class="card-text">Author: @clip.AuthorUsername</p>
-                        <p class="card-text">
-                            Description : @clip.Description
-                        </p>
-
                         <a class="btn btn-info" asp-action="Detail" asp-route-Id="@clip.Id"> Watch Details</a>
-
                     </div>
-
                 </div>
             }
-
         </div>
     </div>
 </div>
+
+
 
 
 @section Scripts {

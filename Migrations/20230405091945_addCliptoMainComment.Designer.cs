@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ThienASPMVC08032023.Database;
 
@@ -11,9 +12,10 @@ using ThienASPMVC08032023.Database;
 namespace ThienASPMVC08032023.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230405091945_addCliptoMainComment")]
+    partial class addCliptoMainComment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -415,7 +417,7 @@ namespace ThienASPMVC08032023.Migrations
 
             modelBuilder.Entity("ThienASPMVC08032023.Models.SubComment", b =>
                 {
-                    b.HasOne("ThienASPMVC08032023.Models.MainComment", "MainComment")
+                    b.HasOne("ThienASPMVC08032023.Models.MainComment", null)
                         .WithMany("subComments")
                         .HasForeignKey("MainCommentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -426,8 +428,6 @@ namespace ThienASPMVC08032023.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("MainComment");
 
                     b.Navigation("User");
                 });

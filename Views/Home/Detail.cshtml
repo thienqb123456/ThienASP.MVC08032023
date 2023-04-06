@@ -1,4 +1,9 @@
-﻿@model Clip
+﻿@using ThienASPMVC08032023.ViewModel;
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+@model Clip
 @{
 
 }
@@ -20,16 +25,62 @@
                 <p class="card-text">  Description : @Model.Description </p>
             </div>
         </div>
+
+        <div id="comment-section">
+            @if (Model.MainComments.Any() == false )
+            {
+                <h5>There's no comment here </h5>
+
+            } else
+            {
+                @foreach (var comment in Model.MainComments)
+                {
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="fw-bold mb-1">@comment.UserName</h6>
+                            <p class="text-muted small mb-0"> Shared publicly - @comment.TimeCreated</p>
+                            <p class="mt-3 mb-4 pb-2"> @comment.CommentMsg</p>
+                            <div class="small d-flex justify-content-start">
+                                <a href="#!" class="d-flex align-items-center me-3">
+                                    <i class="far fa-comment-dots me-2"></i>
+                                    <p class="mb-0">Reply</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            }
+
+            @if (SignInManager.IsSignedIn(User))
+            {
+                await Html.RenderPartialAsync("_MainCommentPartial", new CommentViewModel
+                            {
+                                ClipId = Model.Id,
+                                MainCommentId = 0
+                            });
+               
+            } else
+              {
+                <div>
+                    <h5>You must be logged in to comment…</h5>
+                    <p class="nav-item ">
+                        <a class="btn btn-primary " asp-area="Identity" asp-page="/Account/Login">Login</a>
+                    </p>
+
+                    <p class="nav-item">
+                        <a class="btn btn-outline-primary" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                    </p>
+                 </div>
+              }
+
+        </div>
+
+
     </div>
-
-    <div id="comment-section">
-    </div>
-
-
 
 
 </div>
-
 
 
 

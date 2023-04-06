@@ -57,7 +57,7 @@ namespace ThienASPMVC08032023.Controllers
 
             if (pageSize == null)
             {
-                pageSize = 10;
+                pageSize = 5;
             }
 
 

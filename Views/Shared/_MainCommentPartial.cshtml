@@ -1,0 +1,25 @@
+﻿@using ThienASPMVC08032023.ViewModel;
+@model CommentViewModel
+
+@{
+
+}
+
+<div class="card-footer py-3 border-0">
+    <form asp-controller = "Home" asp-action="Comment">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        
+        <input asp-for="ClipId" type = "hidden" class="form-control" />
+        <input asp-for="MainCommentId" type="hidden" class="form-control" />
+
+        <div class="form-outline w-100">
+            <label asp-for="CommentMsg" class="control-label"></label>
+            <input asp-for="CommentMsg" class="form-control" />
+            <span asp-validation-for="CommentMsg" class="text-danger"></span>
+        </div>
+
+        <div class ="float-end mt-2 pt-1">
+            <input type="submit" value="Comment" class="btn btn-primary" />
+        </div>
+    </form>
+</div>

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ThienASPMVC08032023.Database;
 
@@ -11,9 +12,10 @@ using ThienASPMVC08032023.Database;
 namespace ThienASPMVC08032023.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230404143806_addMainCmt2")]
+    partial class addMainCmt2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -284,54 +286,11 @@ namespace ThienASPMVC08032023.Migrations
                     b.Property<DateTime>("TimeCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ClipId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("MainComments");
-                });
-
-            modelBuilder.Entity("ThienASPMVC08032023.Models.SubComment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("CommentMsg")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("MainCommentId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("TimeCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MainCommentId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("SubComments");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -396,50 +355,16 @@ namespace ThienASPMVC08032023.Migrations
 
             modelBuilder.Entity("ThienASPMVC08032023.Models.MainComment", b =>
                 {
-                    b.HasOne("ThienASPMVC08032023.Models.Clip", "Clip")
-                        .WithMany("MainComments")
+                    b.HasOne("ThienASPMVC08032023.Models.Clip", null)
+                        .WithMany("mainComments")
                         .HasForeignKey("ClipId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("ThienASPMVC08032023.Models.AppUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Clip");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ThienASPMVC08032023.Models.SubComment", b =>
-                {
-                    b.HasOne("ThienASPMVC08032023.Models.MainComment", "MainComment")
-                        .WithMany("subComments")
-                        .HasForeignKey("MainCommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ThienASPMVC08032023.Models.AppUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MainComment");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ThienASPMVC08032023.Models.Clip", b =>
                 {
-                    b.Navigation("MainComments");
-                });
-
-            modelBuilder.Entity("ThienASPMVC08032023.Models.MainComment", b =>
-                {
-                    b.Navigation("subComments");
+                    b.Navigation("mainComments");
                 });
 #pragma warning restore 612, 618
         }
