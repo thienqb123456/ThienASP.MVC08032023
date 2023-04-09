@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using ThienASPMVC08032023.Database;
 using ThienASPMVC08032023.Models;
@@ -37,19 +38,46 @@ namespace ThienASPMVC08032023.Controllers
 
         // GET: Clips
         
-        public IActionResult Index(string searchString,int? currentPage, int? pageSize)
-        {
+        public async Task<ActionResult> Index(string sortOrder, string searchString,int? currentPage, int? pageSize)
+        {   
+            List<Clip> clips = new List<Clip>();
 
-             var clips = from c in _context.Clips
-                        select c;
+            var qrClips = from c in _context.Clips
+                          select c;
 
-            if (!string.IsNullOrEmpty(searchString))
+            
+            //Search
+            if (string.IsNullOrEmpty(searchString))
             {
-                clips = clips.Where(c => c.Name!.Contains(searchString));
+                qrClips.Where(c => c.Name!.Contains(searchString)
+                                || c.Description!.Contains(searchString));
+
                 StatusMessage = $"results of search : {searchString}";
             }
 
-            //pagedlist
+            ViewData["SortbyName"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["SortbyTimeCreated"] = sortOrder == "TimeCreated" ? "TimeCreated_desc" : "TimeCreated";
+
+
+            switch (sortOrder)
+            {
+
+                case "name_desc":
+                    qrClips = qrClips.OrderByDescending(c => c.Name);
+                    break;
+                case "TimeCreated":
+                    qrClips = qrClips.OrderBy(c => c.TimeCreated);
+                    break;
+
+                case "TimeCreated_desc":
+                    qrClips = qrClips.OrderByDescending(c => c.TimeCreated);
+                    break;
+                default:
+                    qrClips = qrClips.OrderBy(c => c.Name);
+                    break;
+            }
+
+            // paging
             if (currentPage == null)
             {
                 currentPage = 1;
@@ -60,24 +88,23 @@ namespace ThienASPMVC08032023.Controllers
                 pageSize = 5;
             }
 
+            return View(qrClips.ToPagedList((int)currentPage, (int)pageSize));  
 
-            return View(clips.ToPagedList((int)currentPage, (int)pageSize));
         }
 
         // GET: Clips/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Clips == null)
+            if (id == null) { return NotFound("Not found clipId"); }
+            if (_context.Clips == null)
             {
-                return NotFound();
+                return NotFound("Not found any Clip in db");
             }
 
             var clip = await _context.Clips
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (clip == null)
-            {
-                return NotFound();
-            }
+            if (clip == null) { return NotFound($"Not found clip has id = {id}"); }
+
 
             return View(clip);
         }
@@ -100,8 +127,8 @@ namespace ThienASPMVC08032023.Controllers
             if (ModelState.IsValid)
             {
                 AppUser currentUser = await _userManager.GetUserAsync(User);
-                clip.AuthorId = currentUser.Id;
                 clip.AuthorUsername = currentUser.UserName;
+                clip.AuthorUser = currentUser;
 
                 _context.Add(clip);
                 await _context.SaveChangesAsync();
@@ -116,16 +143,15 @@ namespace ThienASPMVC08032023.Controllers
         // GET: Clips/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Clips == null)
-            {
-                return NotFound();
-            }
 
-            var clip = await _context.Clips.FindAsync(id);
-            if (clip == null)
+            if (id == null) { return NotFound("Not found clipId"); }
+            if (_context.Clips == null)
             {
-                return NotFound();
+                return NotFound("Not found any Clip in db");
             }
+            var clip = await _context.Clips.FindAsync(id);
+            if (clip == null) { return NotFound($"Not found clip has id = {id}"); }
+
             return View(clip);
         }
 
@@ -134,21 +160,15 @@ namespace ThienASPMVC08032023.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Url,TimeCreated")] Clip clip)
+        public async Task<IActionResult> Edit([Bind("Id,Name,Description,Url,TimeCreated")] Clip clip)
         {
-            
-
-            if (id != clip.Id)
-            {
-                return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
                     AppUser currentUser = await _userManager.GetUserAsync(User);
-                    clip.AuthorId = currentUser.Id;
+                    clip.AuthorUser = currentUser;
                     clip.AuthorUsername = currentUser.UserName;
 
                     _context.Update(clip);
@@ -174,17 +194,14 @@ namespace ThienASPMVC08032023.Controllers
         // GET: Clips/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Clips == null)
+            if (id == null) { return NotFound("Not found clipId"); }
+            if (_context.Clips == null)
             {
-                return NotFound();
+                return NotFound("Not found any Clip in db");
             }
+            var clip = await _context.Clips.FirstOrDefaultAsync(c => c.Id == id);
 
-            var clip = await _context.Clips
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (clip == null)
-            {
-                return NotFound();
-            }
+            if (clip == null) { return NotFound($"Not found clip has id = {id}"); }
 
             return View(clip);
         }
@@ -196,7 +213,7 @@ namespace ThienASPMVC08032023.Controllers
         {
             if (_context.Clips == null)
             {
-                return Problem("Entity set 'AppDbContext.Clips'  is null.");
+                return NotFound("Not found any Clip in db");
             }
             var clip = await _context.Clips.FindAsync(id);
             if (clip != null)

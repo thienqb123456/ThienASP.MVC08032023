@@ -70,40 +70,6 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
             }
         }
 
-        // GET: RoleController/Edit/roleid=
-        public async Task<ActionResult> Edit(string roleid)
-        {
-            var role = await _roleManager.FindByIdAsync(roleid);
-            if  (role == null)
-            {
-                return NotFound("role not found");
-            }
-            return View(role);
-        }
-
-        // POST: RoleController/Edit/roleid=
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(string roleid, [Bind("Name")]IdentityRole role)
-        {
-            try
-            {
-                
-                if (ModelState.IsValid)
-                {
-                    role = await _roleManager.FindByIdAsync(roleid);
-                    await _roleManager.UpdateAsync(role);
-                }
-                
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
 
         // GET: RoleController/Delete/5
         public async Task<ActionResult> Delete(string roleid)

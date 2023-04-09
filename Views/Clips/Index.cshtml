@@ -2,6 +2,7 @@
 @using X.PagedList;
 @using X.PagedList.Mvc.Core;
 
+
 @{
     ViewData["Title"] = "Clips Manager";
 }
@@ -11,7 +12,7 @@
 <h1>Clips Manager</h1>
 
 <nav class="navbar navbar-light bg-light">
-    <form asp-controller = "Clips" asp-action= "Index" class="form-inline">
+    <form method="get" asp-controller = "Clips" asp-action= "Index" class="form-inline">
         <input name="searchString" class="form-control" type="search" placeholder="Search" aria-label="Search" >
         <button class="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
     </form>
@@ -24,7 +25,7 @@
     <thead>
         <tr>
             <th>
-                Name
+                <a class="text-decoration-none" asp-controller="Clips" asp-action="Index" asp-route-sortOrder="@ViewData["SortbyName"]">Name</a>
             </th>
             <th>
                 AuthorUsername
@@ -33,7 +34,7 @@
                 Url
             </th>
             <th>
-                TimeCreated
+                <a class="text-decoration-none" asp-controller="Clips" asp-action="Index" asp-route-sortOrder="@ViewData["SortbyTimeCreated"]">TimeCreated</a>
             </th>
             <th></th>
         </tr>
@@ -68,7 +69,6 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
-
 
 @Html.PagedListPager(Model , currentPage => Url.Action("Index",
         new { currentPage }),

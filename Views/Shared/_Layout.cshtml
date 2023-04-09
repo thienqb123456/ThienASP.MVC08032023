@@ -27,14 +27,25 @@
                                 <span class="visually-hidden">(current)</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Clips" asp-action="Index">Clips</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="Admin" asp-controller="Role" asp-action="Index">Roles</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="Admin" asp-controller="User" asp-action="Index">Users</a>
+                        
+                        @if (User.IsInRole("admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Clips" asp-action="Index">Clips Manager</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin" asp-controller="Role" asp-action="Index">Roles Manager</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin" asp-controller="User" asp-action="Index">Users Manager</a>
+                            </li>
+                            
+                        }
+
+                        
+
+                        <li class="nav-item ">
+                            <a class="nav-link btn btn-outline-success" asp-area="" asp-controller="Home" asp-action="Upload">Upload</a>
                         </li>
 
                         @*<li class="nav-item dropdown">
@@ -48,10 +59,10 @@
                             </div>
                         </li>*@
                     </ul>
-                    @*<form class="d-flex">
-                        <input class="form-control me-sm-2" type="search" placeholder="Search">
+                    <form class="d-flex" asp-controller="Home" asp-action="Index" method="get">
+                        <input name="searchString" class="form-control me-sm-2" type="search" placeholder="Search">
                         <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-                    </form>*@
+                    </form>
 
                     <partial name="_LoginPartial">
 

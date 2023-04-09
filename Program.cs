@@ -83,9 +83,21 @@ namespace ThienASPMVC08032023
             app.UseAuthorization();
             app.MapRazorPages();
 
+            
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Home}/{action=Index}/{Id?}");
+
+            app.MapControllerRoute(
+                name: "profileUser",
+                pattern: "/{userName}/{action}",
+                defaults: new
+                {
+                    controller = "Profile",
+                    action = "index",
+                    userName = "default",
+                });
+
 
             app.Run();
         }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using ThienASPMVC08032023.Areas.Admin.Models.User;
 using ThienASPMVC08032023.Models;
 using X.PagedList;
@@ -39,6 +40,7 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
         public ActionResult Index(int? currentPage, int? pageSize)
         {
             List<AppUser> users = _userManager.Users.ToList();
+
             if (currentPage == null)
             {
                 currentPage = 1;

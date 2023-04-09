@@ -1,16 +1,23 @@
-﻿@model List<Clip>
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<AppUser> UserManager
+@inject SignInManager<AppUser> SignInManager
+@model List<Clip>
 @{
 }
 
+<partial name="_StatusMessage"></partial>
+
 <h1>Valorant Clips</h1>
+
 
 <div class="mt-4">
     <div class="row">
-        <div class="col-sm-6 col-lg-4">
+        
             @foreach (var clip in Model)
             {
+             <div class="col-sm-6 col-lg-4">
                 <div class="card">
-                    <a asp-action="Detail" asp-route-id="@clip.Id">
+                    <a asp-controller="Home" asp-action="Detail" asp-route-id="@clip.Id">
                         <img class='card-img-top'
                              src='https://i3.ytimg.com/vi/@clip.Url/maxresdefault.jpg'
                              alt="@clip.Url" />
@@ -18,14 +25,25 @@
                     <p class="card-text">TimeCreated : @clip.TimeCreated</p>
                     <div class="card-body">
                         <h5>
-                            <a class="text-decoration-none" asp-action="Detail" asp-route-id="@clip.Id"> @clip.Name</a>
+                            <a class="text-decoration-none" asp-controller="Home" asp-action="Detail" asp-route-Id="@clip.Id"> @clip.Name</a>
                         </h5>
-                        <p class="card-text">Author: @clip.AuthorUsername</p>
-                        <a class="btn btn-info" asp-action="Detail" asp-route-Id="@clip.Id"> Watch Details</a>
+                        <p class="card-text ">Author: <a class="text-decoration-none" href="~/@clip.AuthorUsername/">@clip.AuthorUsername</a> </p>
+                        <a class="btn btn-info" asp-controller="Home" asp-action="Detail" asp-route-Id="@clip.Id"> Watch Details</a>
+                        @if (SignInManager.IsSignedIn(User)  )
+                        {
+                            @if (await UserManager.GetUserAsync(User) == clip.AuthorUser)
+                            {
+                                <a class="btn btn-info" asp-controller="Home" asp-action="Edit" asp-route-Id="@clip.Id"> Edit</a>
+                                <a class="btn btn-info" asp-controller="Home" asp-action="Delete" asp-route-Id="@clip.Id"> Delete</a>
+                                
+                            }
+                        }
+
                     </div>
                 </div>
+             </div>
             }
-        </div>
+        
     </div>
 </div>
 
