@@ -14,7 +14,7 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
 {
     [Authorize(Roles = "admin,manager")]
     [Area("Admin")]
-    [Route("/User/{Action}")]
+    [Route("/User/{Action=Index}")]
     public class UserController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
@@ -36,7 +36,6 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
 
 
         // GET: UserController
-        [Route("/User/")]
         public ActionResult Index(int? currentPage, int? pageSize)
         {
             List<AppUser> users = _userManager.Users.ToList();

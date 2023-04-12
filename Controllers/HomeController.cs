@@ -11,13 +11,13 @@ using X.PagedList;
 
 namespace ThienASPMVC08032023.Controllers
 {
-
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
         private readonly AppDbContext _context;
         private readonly UserManager<AppUser> _userManager;
 
+        
         public HomeController(UserManager<AppUser> userManager, ILogger<HomeController> logger, AppDbContext context)
         {
             _logger = logger;
@@ -28,7 +28,7 @@ namespace ThienASPMVC08032023.Controllers
         [TempData]
         public string? StatusMessage { get; set; }
 
-
+        
         public async Task <IActionResult> Index(string searchString)
         {
             if (_context.Clips == null)
@@ -54,9 +54,10 @@ namespace ThienASPMVC08032023.Controllers
             return View(clips);
         }
 
-        public async Task<ActionResult> Detail(int? Id)
+        [HttpGet("/clip/{id}")]
+        public async Task<ActionResult> Detail(int? id)
         {
-            if (Id == 0 || Id == null)
+            if (id == 0 || id == null)
             {
                 return NotFound("Not found id ");
             }
@@ -65,24 +66,25 @@ namespace ThienASPMVC08032023.Controllers
                 return NotFound("Not found any clip in DB");
             }
             var clip = await _context.Clips.Include(c => c.MainComments)
-                                            .FirstOrDefaultAsync(c => c.Id == Id);
+                                            .FirstOrDefaultAsync(c => c.Id == id);
 
             if (clip == null)
             {
-                return NotFound($"Not found clip has id = {Id}");
+                return NotFound($"Not found clip has id = {id}");
             }
 
             return View(clip);
         }
 
         [Authorize]
+        [HttpGet("{action}")]
         public ActionResult Upload()
         {
             return View();
         }
 
         [Authorize]
-        [HttpPost]
+        [HttpPost("{action}")]
         public async Task<ActionResult> Upload([Bind("Id,Name,Description,Url,TimeCreated,AuthorId,AuthorUsername")] Clip clip)
         {
             if (ModelState.IsValid)
@@ -105,63 +107,16 @@ namespace ThienASPMVC08032023.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize]
-        public async Task<ActionResult> Comment(CommentViewModel commentInput)
-        {
-            AppUser currentUser = await _userManager.GetUserAsync(User);
-
-            if (!ModelState.IsValid)
-            {
-                RedirectToAction("Detail", "Home", new { id = commentInput });
-            }
-
-            if (_context.Clips == null) { return NotFound("Notfound any clip in DB"); }
-
-            var clip = await _context.Clips.FirstOrDefaultAsync(c=> c.Id == commentInput.ClipId);
-            
-            if (clip == null) { return NotFound($"Not found clip has Id = {commentInput.ClipId}"); }
-
-            if (commentInput.MainCommentId == 0)
-            {
-                clip.MainComments = clip.MainComments ?? new List<MainComment>();
-                clip.MainComments.Add( new MainComment
-                {
-                    CommentMsg = commentInput.CommentMsg,
-                    User = currentUser,
-                    UserName = currentUser.UserName,
-                    ClipId = clip.Id
-
-                });
-                _context.Update(clip);
-            } 
-            //else
-            //{
-            //    var subComment = new SubComment
-            //    {
-            //        MainCommentId = commentInput.MainCommentId,
-            //        CommentMsg = commentInput.CommentMsg,
-            //        User = currentUser,
-            //        UserName = currentUser.UserName
-            //    };
-                
-            //    _context.Update(subComment);
-            //}
-
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("Detail", "Home", new {id = commentInput.ClipId});
-        }
-
 
         [Authorize]
-        [HttpGet]
-        public async Task<ActionResult> Edit(int? Id)
+        [HttpGet("/clip/{action}/{id}")]
+        public async Task<ActionResult> Edit(int? id)
         {
-            if (Id == null) { return NotFound("Not found clipId"); }
+            if (id == null) { return NotFound("Not found clipId"); }
             if (_context.Clips == null) {return NotFound("Not found any Clip in db");
             }
-            var clip = await _context.Clips.FirstOrDefaultAsync(c => c.Id == Id);
-            if (clip == null) { return NotFound($"Not found clip has id = {Id}"); }
+            var clip = await _context.Clips.FirstOrDefaultAsync(c => c.Id == id);
+            if (clip == null) { return NotFound($"Not found clip has id = {id}"); }
 
             var currentUser = await _userManager.GetUserAsync(User);
             
@@ -177,7 +132,7 @@ namespace ThienASPMVC08032023.Controllers
         }
 
         [Authorize]
-        [HttpPost]
+        [HttpPost("/clip/{action}/{id}")]
         public async Task<ActionResult> Edit([Bind("Id,Name,Description,Url,TimeCreated,AuthorId,AuthorUsername")] Clip clipModel)
         {
             if (ModelState.IsValid)
@@ -196,7 +151,7 @@ namespace ThienASPMVC08032023.Controllers
 
 
         [Authorize]
-        [HttpGet]
+        [HttpGet("/clip/{action}/{id}")]
         public async Task<ActionResult> Delete(int? Id)
         {
 
@@ -220,7 +175,7 @@ namespace ThienASPMVC08032023.Controllers
         }
 
         [Authorize]
-        [HttpPost]
+        [HttpPost("/clip/{action}/{Id}")]
         public async Task<ActionResult> DeleteConfirm(int? Id)
         {
             if (Id == null) { return NotFound("Not found clipId"); }

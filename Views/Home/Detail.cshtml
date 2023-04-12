@@ -46,6 +46,22 @@
                                     <i class="far fa-comment-dots me-2"></i>
                                     <p class="mb-0">Reply</p>
                                 </a>
+                                @if (SignInManager.IsSignedIn(User))
+                                {
+                                    @if (await UserManager.GetUserAsync(User) == comment.User)
+                                    {
+                                        <a asp-controller="Comment" asp-action="Edit" asp-route-id="@comment.Id" class="d-flex align-items-center me-3">
+                                            <i class="far fa-comment-dots me-2"></i>
+                                            <p class="mb-0">Edit</p>
+                                        </a>
+
+                                        <a asp-controller="Comment" asp-action="Delete" asp-route-id="@comment.Id" class="d-flex align-items-center me-3">
+                                            <i class="far fa-comment-dots me-2"></i>
+                                            <p class="mb-0">Delete</p>
+                                        </a>
+                                    }
+                                }
+
                             </div>
                         </div>
                     </div>
@@ -66,7 +82,7 @@
                 <div>
                     <h5>You must be logged in to comment…</h5>
                     <p class="nav-item ">
-                        <a class="btn btn-primary " asp-area="Identity" asp-page="/Account/Login">Login</a>
+                        <a class="btn btn-primary " asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Url.Page("", new { area = "" })">Login</a>
                     </p>
 
                     <p class="nav-item">

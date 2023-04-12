@@ -34,6 +34,10 @@ namespace ThienASPMVC08032023.Controllers
 
             var user = await _context.Users.Include(u => u.Clips)
                                      .FirstOrDefaultAsync(u => u.UserName == userName);
+            if (user == null)
+            {
+                return NotFound($"Not found url :  {userName}");
+            }
 
             return View(user);
         }

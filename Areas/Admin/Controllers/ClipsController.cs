@@ -14,10 +14,11 @@ using ThienASPMVC08032023.Database;
 using ThienASPMVC08032023.Models;
 using X.PagedList;
 
-namespace ThienASPMVC08032023.Controllers
+namespace ThienASPMVC08032023.Areas.Admin.Controllers
 {
     [Authorize(Roles = "admin, manager")]
-    [Route("/Clips/[action]/")]
+    [Area("Admin")]
+    [Route("/{controller}/{action=Index}/{id:int?}")]
     public class ClipsController : Controller
     {
         private readonly AppDbContext _context;
@@ -37,27 +38,16 @@ namespace ThienASPMVC08032023.Controllers
 
 
         // GET: Clips
-        
-        public async Task<ActionResult> Index(string sortOrder, string searchString,int? currentPage, int? pageSize)
-        {   
-            List<Clip> clips = new List<Clip>();
-
+        [HttpGet]
+        public ActionResult Index(string sortOrder, int? currentPage, int? pageSize)
+        {
             var qrClips = from c in _context.Clips
                           select c;
 
-            
-            //Search
-            if (string.IsNullOrEmpty(searchString))
-            {
-                qrClips.Where(c => c.Name!.Contains(searchString)
-                                || c.Description!.Contains(searchString));
-
-                StatusMessage = $"results of search : {searchString}";
-            }
+            //sort
 
             ViewData["SortbyName"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["SortbyTimeCreated"] = sortOrder == "TimeCreated" ? "TimeCreated_desc" : "TimeCreated";
-
 
             switch (sortOrder)
             {
@@ -88,7 +78,7 @@ namespace ThienASPMVC08032023.Controllers
                 pageSize = 5;
             }
 
-            return View(qrClips.ToPagedList((int)currentPage, (int)pageSize));  
+            return View(qrClips.ToPagedList((int)currentPage, (int)pageSize));
 
         }
 
@@ -122,7 +112,7 @@ namespace ThienASPMVC08032023.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,Url,TimeCreated,AuthorId,AuthorUsername")] Clip clip)
         {
-            
+
 
             if (ModelState.IsValid)
             {
@@ -138,7 +128,7 @@ namespace ThienASPMVC08032023.Controllers
             }
             return View(clip);
         }
-       
+
 
         // GET: Clips/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -220,7 +210,7 @@ namespace ThienASPMVC08032023.Controllers
             {
                 _context.Clips.Remove(clip);
             }
-            
+
             await _context.SaveChangesAsync();
             StatusMessage = $"Deleted Clip {clip?.Name} Successfully!";
             return RedirectToAction(nameof(Index));
@@ -228,7 +218,7 @@ namespace ThienASPMVC08032023.Controllers
 
         private bool ClipExists(int id)
         {
-          return _context.Clips!.Any(e => e.Id == id);
+            return _context.Clips!.Any(e => e.Id == id);
         }
     }
 }

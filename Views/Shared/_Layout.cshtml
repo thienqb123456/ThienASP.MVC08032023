@@ -28,10 +28,10 @@
                             </a>
                         </li>
                         
-                        @if (User.IsInRole("admin"))
+                        @if (User.IsInRole("admin") || User.IsInRole("manager"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Clips" asp-action="Index">Clips Manager</a>
+                                <a class="nav-link" asp-area="Admin" asp-controller="Clips" asp-action="Index">Clips Manager</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="Admin" asp-controller="Role" asp-action="Index">Roles Manager</a>

@@ -10,7 +10,7 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
 {
     [Authorize(Roles = "admin")]
     [Area("Admin")]
-    [Route("/Role/{action}")]
+    [Route("/Role/{action=Index}")]
     public class RoleController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;

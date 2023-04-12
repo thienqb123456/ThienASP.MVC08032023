@@ -13,7 +13,7 @@ namespace ThienASPMVC08032023.Models
         public string? Name { get; set; }
 
         
-        public string? AuthorId { get; set; }
+        public string AuthorId { get; set; }
 
         [ForeignKey("AuthorId")]
         public AppUser? AuthorUser { get; set; }

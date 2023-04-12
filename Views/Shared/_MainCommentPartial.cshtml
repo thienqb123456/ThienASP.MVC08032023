@@ -6,11 +6,13 @@
 }
 
 <div class="card-footer py-3 border-0">
-    <form asp-controller = "Home" asp-action="Comment">
+    <form asp-controller = "Comment" asp-action="Create">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         
         <input asp-for="ClipId" type = "hidden" class="form-control" />
         <input asp-for="MainCommentId" type="hidden" class="form-control" />
+        <input asp-for="UserId" type="hidden" class="form-control"/>
+
 
         <div class="form-outline w-100">
             <label asp-for="CommentMsg" class="control-label"></label>
@@ -23,3 +25,5 @@
         </div>
     </form>
 </div>
+
+
