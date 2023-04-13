@@ -85,26 +85,20 @@ namespace ThienASPMVC08032023.Controllers
 
         [Authorize]
         [HttpPost("{action}")]
-        public async Task<ActionResult> Upload([Bind("Id,Name,Description,Url,TimeCreated,AuthorId,AuthorUsername")] Clip clip)
+        public async Task<ActionResult> Upload([Bind("Id,Name,Description,Url,TimeCreated,AuthorId,AuthorUsername,AuthorUser")] Clip clipModel)
         {
-            if (ModelState.IsValid)
+            AppUser currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser != null)
             {
-                AppUser currentUser = await _userManager.GetUserAsync(User);
-                clip.AuthorUser = currentUser;
-                clip.AuthorUsername = currentUser.UserName;
+                clipModel.AuthorUser = currentUser;
+                clipModel.AuthorUsername = currentUser.UserName;
 
-                _context.Add(clip);
+                _context.Add(clipModel);
                 await _context.SaveChangesAsync();
-
-                StatusMessage = $"Uploaded clip Name :  {clip.Name} Successfully!";
-                return RedirectToAction(nameof(Index));
+                StatusMessage = $"Uploaded clip Name :  {clipModel.Name} Successfully!";
             }
 
-            _context.Add(clip);
-
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("Index");
+            return RedirectToAction("Detail", "Home", new { id = clipModel.Id });
         }
 
 
@@ -112,19 +106,16 @@ namespace ThienASPMVC08032023.Controllers
         [HttpGet("/clip/{action}/{id}")]
         public async Task<ActionResult> Edit(int? id)
         {
-            if (id == null) { return NotFound("Not found clipId"); }
-            if (_context.Clips == null) {return NotFound("Not found any Clip in db");
-            }
+            if (id == null) return NotFound("Not found clipId");
+            if (_context.Clips == null) return NotFound("Not found any Clip in db");
+            
             var clip = await _context.Clips.FirstOrDefaultAsync(c => c.Id == id);
-            if (clip == null) { return NotFound($"Not found clip has id = {id}"); }
+            if (clip == null) return NotFound($"Not found clip has id = {id}"); 
 
             var currentUser = await _userManager.GetUserAsync(User);
             
 
-            if (clip.AuthorUser != currentUser  )
-            {
-                return NotFound("U do not have permisson to access ");
-            }
+            if (clip.AuthorUser != currentUser  ) return NotFound("U do not have permisson to access ");
             
 
             return View(clip);
@@ -133,19 +124,20 @@ namespace ThienASPMVC08032023.Controllers
 
         [Authorize]
         [HttpPost("/clip/{action}/{id}")]
-        public async Task<ActionResult> Edit([Bind("Id,Name,Description,Url,TimeCreated,AuthorId,AuthorUsername")] Clip clipModel)
+        public async Task<ActionResult> Edit([Bind("Id,Name,Description,Url")] Clip clipModel)
         {
-            if (ModelState.IsValid)
-            {
-                var currentUser = await _userManager.GetUserAsync(User);
-                clipModel.AuthorUser = currentUser;
-                clipModel.AuthorUsername = currentUser.UserName;
+            if (_context.Clips == null) return BadRequest("Not found any clip in db");
+            var clip = await _context.Clips.SingleOrDefaultAsync(c => c.Id== clipModel.Id);
+            if (clip == null) return NotFound($"Not found clip has id = {clipModel.Id}");
 
-                _context.Update(clipModel);
-                await _context.SaveChangesAsync();
-                StatusMessage = $"Updated Clip has name : {clipModel.Name} Successfully!";
-            }
+            clip.Name = clipModel.Name;
+            clip.Description = clipModel.Description;
+            clip.Url = clipModel.Url;
+            clip.TimeCreated = clipModel.TimeCreated;
 
+            _context.Update(clip);
+            await _context.SaveChangesAsync();
+            StatusMessage = $"Updated Clip has name : {clipModel.Name} Successfully!";
             return RedirectToAction("Detail", "Home", new { id = clipModel.Id });
         }
 
@@ -169,7 +161,6 @@ namespace ThienASPMVC08032023.Controllers
             {
                 return NotFound("U do not have permisson to access ");
             }
-
 
             return View(clip);
         }

@@ -12,6 +12,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using ThienASPMVC08032023.Database;
 using ThienASPMVC08032023.Models;
+using ThienASPMVC08032023.ViewModel;
 using X.PagedList;
 
 namespace ThienASPMVC08032023.Areas.Admin.Controllers
@@ -110,23 +111,24 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Url,TimeCreated,AuthorId,AuthorUsername")] Clip clip)
+        public async Task<IActionResult> Create(ClipViewModel clipVModel)
         {
-
-
-            if (ModelState.IsValid)
+            var clip = new Clip();
+            AppUser currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser != null)
             {
-                AppUser currentUser = await _userManager.GetUserAsync(User);
-                clip.AuthorUsername = currentUser.UserName;
                 clip.AuthorUser = currentUser;
+                clip.AuthorUsername = currentUser.UserName;
+                clip.Name = clipVModel.Name;
+                clip.Description = clipVModel.Description;
+                clip.Url = clipVModel.Url;
+                clip.TimeCreated= DateTime.Now;
 
                 _context.Add(clip);
                 await _context.SaveChangesAsync();
-
-                StatusMessage = $"Created Clip name :  {clip.Name} Successfully!";
-                return RedirectToAction(nameof(Index));
+                StatusMessage = $"Uploaded clip Name :  {clipVModel.Name} Successfully!";
             }
-            return View(clip);
+            return RedirectToAction("Index");
         }
 
 
@@ -150,35 +152,39 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("Id,Name,Description,Url,TimeCreated")] Clip clip)
+        public async Task<IActionResult> Edit([Bind("Id,Name,Description,Url")] Clip clipModel)
         {
-
-            if (ModelState.IsValid)
+            try
             {
-                try
+                if (_context.Clips == null)
                 {
-                    AppUser currentUser = await _userManager.GetUserAsync(User);
-                    clip.AuthorUser = currentUser;
-                    clip.AuthorUsername = currentUser.UserName;
+                    return BadRequest("Not found any clip ib db");
+                }
+                var clip = await _context.Clips.FirstOrDefaultAsync(c => c.Id == clipModel.Id);
+                if (clip == null ) { return NotFound($"Not found clip has id = {clipModel.Id}"); }
 
-                    _context.Update(clip);
-                    await _context.SaveChangesAsync();
-                    StatusMessage = $"Edited Clip name : {clip.Name} Successfully!";
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ClipExists(clip.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                clip.Name = clipModel.Name;
+                clip.Description = clipModel.Description;
+                clip.Url = clipModel.Url;
+                clip.TimeCreated = DateTime.Now;
+
+                _context.Update(clip);
+                await _context.SaveChangesAsync();
+                StatusMessage = $"Edited Clip name : {clipModel.Name} Successfully!";
             }
-            return View(clip);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ClipExists(clipModel.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
+
         }
 
         // GET: Clips/Delete/5

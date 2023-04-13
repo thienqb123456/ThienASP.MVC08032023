@@ -145,7 +145,7 @@ namespace ThienASPMVC08032023.Areas.Identity.Pages.Account
                 {
 
                     //Add Default Role to user after register successfully
-                    string memberRoleId = "9cf004a2-9e08-48b5-ba20-beea51aa52fb";
+                    string memberRoleId = "0912d02f-7282-4cdc-9517-b5f8e3c60e7b";
                     IdentityRole memberRole = await _roleManager.FindByIdAsync(memberRoleId) ; 
 
                     if (memberRole != null)

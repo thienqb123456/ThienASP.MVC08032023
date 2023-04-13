@@ -10,21 +10,21 @@ namespace ThienASPMVC08032023.Models
 
         [Required]
         [Display(Name = "Clip title")]
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
         
-        public string AuthorId { get; set; }
+        public string? AuthorId { get; set; }
 
         [ForeignKey("AuthorId")]
-        public AppUser? AuthorUser { get; set; }
+        public AppUser AuthorUser { get; set; }
 
         public string? AuthorUsername { get; set; }
 
         [Required]
-        public string? Description { get; set; }
+        public string Description { get; set; }
 
         [Required]
-        public string? Url { get; set; }
+        public string Url { get; set; }
 
         public List<MainComment>? MainComments { get; set; }
 

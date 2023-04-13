@@ -274,7 +274,8 @@ namespace ThienASPMVC08032023.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ClipId")
+                    b.Property<int?>("ClipId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("CommentMsg")
@@ -298,40 +299,6 @@ namespace ThienASPMVC08032023.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("MainComments");
-                });
-
-            modelBuilder.Entity("ThienASPMVC08032023.Models.SubComment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("CommentMsg")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("MainCommentId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("TimeCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MainCommentId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("SubComments");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -413,25 +380,6 @@ namespace ThienASPMVC08032023.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ThienASPMVC08032023.Models.SubComment", b =>
-                {
-                    b.HasOne("ThienASPMVC08032023.Models.MainComment", "MainComment")
-                        .WithMany("subComments")
-                        .HasForeignKey("MainCommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ThienASPMVC08032023.Models.AppUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MainComment");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("ThienASPMVC08032023.Models.AppUser", b =>
                 {
                     b.Navigation("Clips");
@@ -440,11 +388,6 @@ namespace ThienASPMVC08032023.Migrations
             modelBuilder.Entity("ThienASPMVC08032023.Models.Clip", b =>
                 {
                     b.Navigation("MainComments");
-                });
-
-            modelBuilder.Entity("ThienASPMVC08032023.Models.MainComment", b =>
-                {
-                    b.Navigation("subComments");
                 });
 #pragma warning restore 612, 618
         }
