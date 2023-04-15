@@ -17,7 +17,7 @@ using X.PagedList;
 
 namespace ThienASPMVC08032023.Areas.Admin.Controllers
 {
-    [Authorize(Roles = "admin, manager")]
+    [Authorize(Roles = "admin")]
     [Area("Admin")]
     [Route("/{controller}/{action=Index}/{id:int?}")]
     public class ClipsController : Controller

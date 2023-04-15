@@ -12,7 +12,7 @@ using X.PagedList;
 
 namespace ThienASPMVC08032023.Areas.Admin.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "admin")]
     [Area("Admin")]
     [Route("/User/{Action=Index}")]
     public class UserController : Controller

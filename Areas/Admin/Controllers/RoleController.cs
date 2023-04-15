@@ -8,7 +8,7 @@ using ThienASPMVC08032023.Models;
 
 namespace ThienASPMVC08032023.Areas.Admin.Controllers
 {
-    
+    [Authorize(Roles ="admin")]
     [Area("Admin")]
     [Route("/Role/{action=Index}")]
     public class RoleController : Controller
