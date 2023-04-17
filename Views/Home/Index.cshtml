@@ -7,7 +7,7 @@
 
 <partial name="_StatusMessage"></partial>
 
-<h1>Valorant Clips</h1>
+<h1 class="text-warning">Best Gaming Clips</h1>
 
 
 <div class="mt-4">
@@ -15,13 +15,13 @@
         
             @foreach (var clip in Model)
             {
-             <div class="col-sm-6 col-lg-4">
+             <div class="col-sm-6 col-lg-6">
                 <div class="card">
                     <a asp-controller="Home" asp-action="Detail" asp-route-id="@clip.Id">
                         <img class='card-img-top'
                              src='https://i3.ytimg.com/vi/@clip.Url/maxresdefault.jpg'/>
                     </a>
-                    <p class="card-text">TimeCreated : @clip.TimeCreated</p>
+                    <p class="card-text text-info">TimeCreated : @clip.TimeCreated</p>
                     <div class="card-body">
                         <h5>
                             <a class="text-decoration-none" asp-controller="Home" asp-action="Detail" asp-route-Id="@clip.Id"> @clip.Name</a>
@@ -32,8 +32,8 @@
                         {
                             @if (await UserManager.GetUserAsync(User) == clip.AuthorUser)
                             {
-                                <a class="btn btn-info" asp-controller="Home" asp-action="Edit" asp-route-Id="@clip.Id"> Edit</a>
-                                <a class="btn btn-info" asp-controller="Home" asp-action="Delete" asp-route-Id="@clip.Id"> Delete</a>
+                                <a class="btn btn-success" asp-controller="Home" asp-action="Edit" asp-route-Id="@clip.Id"> Edit</a>
+                                <a class="btn btn-danger" asp-controller="Home" asp-action="Delete" asp-route-Id="@clip.Id"> Delete</a>
                                 
                             }
                         }

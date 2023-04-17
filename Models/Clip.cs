@@ -28,6 +28,7 @@ namespace ThienASPMVC08032023.Models
 
         public List<MainComment>? MainComments { get; set; }
 
+
         public DateTime TimeCreated { get; set; } = DateTime.Now;   
     }
 }

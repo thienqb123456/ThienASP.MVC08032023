@@ -29,7 +29,7 @@ namespace ThienASPMVC08032023.Controllers
         public string? StatusMessage { get; set; }
 
         
-        public async Task <IActionResult> Index(string searchString)
+        public async Task <ActionResult> Index(string searchString)
         {
             if (_context.Clips == null)
             {

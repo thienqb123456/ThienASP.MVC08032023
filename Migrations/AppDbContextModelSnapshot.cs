@@ -230,6 +230,9 @@ namespace ThienASPMVC08032023.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            
+
+
             modelBuilder.Entity("ThienASPMVC08032023.Models.Clip", b =>
                 {
                     b.Property<int>("Id")
@@ -243,6 +246,8 @@ namespace ThienASPMVC08032023.Migrations
 
                     b.Property<string>("AuthorUsername")
                         .HasColumnType("nvarchar(max)");
+
+                    
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -358,7 +363,10 @@ namespace ThienASPMVC08032023.Migrations
                         .WithMany("Clips")
                         .HasForeignKey("AuthorId");
 
+                   
+
                     b.Navigation("AuthorUser");
+
                 });
 
             modelBuilder.Entity("ThienASPMVC08032023.Models.MainComment", b =>

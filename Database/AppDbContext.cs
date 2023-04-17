@@ -14,5 +14,6 @@ namespace ThienASPMVC08032023.Database
 
         public DbSet<MainComment>? MainComments { get; set; }
 
+
     }
 }
