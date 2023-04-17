@@ -68,7 +68,7 @@ namespace ThienASPMVC08032023.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [MaxLength(20)]
+            [MaxLength(50)]
             [Display(Name ="User Name or Email")]
             public string UserNameOrEmail { get; set; }
             
@@ -106,7 +106,7 @@ namespace ThienASPMVC08032023.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = "/user/account/profile/")
+        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
 

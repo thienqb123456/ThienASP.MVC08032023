@@ -1,0 +1,71 @@
+﻿@model IPagedList<ThienASPMVC08032023.Models.Clip>
+@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+
+
+@{
+    ViewData["Title"] = "Clips Manager";
+}
+
+<partial name="_StatusMessage"></partial>
+
+<h1>Clips Manager</h1>
+
+<p>
+    <a class="btn btn-warning" asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a class="text-decoration-none" asp-controller="Clips" asp-action="Index" asp-route-sortOrder="@ViewData["SortbyName"]">Name</a>
+            </th>
+            <th>
+                AuthorUsername
+            </th>
+            <th>
+                Url
+            </th>
+            <th>
+                <a class="text-decoration-none" asp-controller="Clips" asp-action="Index" asp-route-sortOrder="@ViewData["SortbyTimeCreated"]">TimeCreated</a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var clip in Model) {
+        <tr>
+            <td>
+                    @clip.Name
+            </td>
+            <td>
+                    @clip.AuthorUsername
+            </td>
+            <td>
+                    @clip.Url
+            </td>
+            <td>
+                    @clip.TimeCreated
+            </td>
+            <td>
+                    <a class="btn btn-success" asp-action="Edit" asp-route-id="@clip.Id">Edit</a> |
+                    <a class="btn btn-info" asp-action="Details" asp-route-id="@clip.Id">Details</a> |
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@clip.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+@Html.PagedListPager(Model , currentPage => Url.Action("Index",
+        new { currentPage }),
+        new PagedListRenderOptions {
+            LiElementClasses = new string[] {"page-item"},
+            PageClasses = new string[] {"page-link"}
+        } )

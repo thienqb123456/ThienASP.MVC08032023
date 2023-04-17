@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using ThienASPMVC08032023.Database;
 using ThienASPMVC08032023.Models;
 using ThienASPMVC08032023.Services;
@@ -27,8 +29,11 @@ namespace ThienASPMVC08032023
 
             builder.Services.AddRazorPages();
 
+
             builder.Services.AddTransient<IEmailSender, EmailSender>();
-            builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
+            //Configure Get  Sendgrid ApiKey in appsetting.json
+            builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration.GetSection("Sendgrid"));
+
 
             builder.Services.Configure<IdentityOptions>(options =>
             {
@@ -60,7 +65,7 @@ namespace ThienASPMVC08032023
             {
                 options.LoginPath = "/login/";
                 options.LogoutPath = "/logout/";
-                options.AccessDeniedPath = "/AccessDenied";
+                options.AccessDeniedPath = "/AccessDenied/";
             });
 
 
@@ -85,7 +90,21 @@ namespace ThienASPMVC08032023
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Home}/{action=Index}/{Id?}")
+                ;
+
+
+            app.MapControllerRoute(
+                name: "profileUser",
+                pattern: "/{userName}/{action}",
+                defaults: new
+                {
+                    controller = "Profile",
+                    action = "index",
+                    userName = "default",
+                });
+
+
 
             app.Run();
         }

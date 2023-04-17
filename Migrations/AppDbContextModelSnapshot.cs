@@ -230,6 +230,9 @@ namespace ThienASPMVC08032023.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            
+
+
             modelBuilder.Entity("ThienASPMVC08032023.Models.Clip", b =>
                 {
                     b.Property<int>("Id")
@@ -238,9 +241,13 @@ namespace ThienASPMVC08032023.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Author")
-                        .IsRequired()
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AuthorUsername")
                         .HasColumnType("nvarchar(max)");
+
+                    
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -259,7 +266,44 @@ namespace ThienASPMVC08032023.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AuthorId");
+
                     b.ToTable("Clips");
+                });
+
+            modelBuilder.Entity("ThienASPMVC08032023.Models.MainComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("ClipId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<string>("CommentMsg")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TimeCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClipId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("MainComments");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -311,6 +355,47 @@ namespace ThienASPMVC08032023.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ThienASPMVC08032023.Models.Clip", b =>
+                {
+                    b.HasOne("ThienASPMVC08032023.Models.AppUser", "AuthorUser")
+                        .WithMany("Clips")
+                        .HasForeignKey("AuthorId");
+
+                   
+
+                    b.Navigation("AuthorUser");
+
+                });
+
+            modelBuilder.Entity("ThienASPMVC08032023.Models.MainComment", b =>
+                {
+                    b.HasOne("ThienASPMVC08032023.Models.Clip", "Clip")
+                        .WithMany("MainComments")
+                        .HasForeignKey("ClipId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ThienASPMVC08032023.Models.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Clip");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ThienASPMVC08032023.Models.AppUser", b =>
+                {
+                    b.Navigation("Clips");
+                });
+
+            modelBuilder.Entity("ThienASPMVC08032023.Models.Clip", b =>
+                {
+                    b.Navigation("MainComments");
                 });
 #pragma warning restore 612, 618
         }

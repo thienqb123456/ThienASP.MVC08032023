@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,8 +8,9 @@ using ThienASPMVC08032023.Models;
 
 namespace ThienASPMVC08032023.Areas.Admin.Controllers
 {
+    [Authorize(Roles ="admin")]
     [Area("Admin")]
-    [Route("/Role/[action]")]
+    [Route("/Role/{action=Index}")]
     public class RoleController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -23,6 +25,10 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
             _logger = logger;
             _context = context;
         }
+
+        [TempData]
+        public string? StatusMessage { get; set; }
+
 
         // GET: RoleController
         public async Task<IActionResult> Index()
@@ -40,10 +46,22 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
         // POST: RoleController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create([Bind("Id,Name")] IdentityRole role )
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return NotFound();  
+                }
+
+                var result = await _roleManager.CreateAsync(role);
+                if (result.Succeeded)
+                {
+                    StatusMessage = $"Created a role named : {role.Name} successfully ";
+
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -52,40 +70,46 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
             }
         }
 
-        // GET: RoleController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: RoleController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
 
         // GET: RoleController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(string roleid)
         {
-            return View();
+            if (string.IsNullOrEmpty(roleid))
+            {
+                return NotFound("Not Found roleid");
+            }
+            var role = await _roleManager.FindByIdAsync(roleid);
+            if (role == null)
+            {
+                return NotFound("not found role");
+            }
+            return View(role);
         }
 
         // POST: RoleController/Delete/5
-        [HttpPost]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> DeleteConfirmed(string roleid)
         {
             try
             {
+                if (string.IsNullOrEmpty(roleid))
+                {
+                    return NotFound("not found roleid");
+                }
+
+                var role = await _roleManager.FindByIdAsync(roleid);
+                if (role == null) 
+                { 
+                    return NotFound("role not found"); 
+                }
+                
+                var deleteResult = await _roleManager.DeleteAsync(role);
+                if (deleteResult.Succeeded)
+                {
+                    StatusMessage = $"Deleted role named : {role.Name} successfully ";
+                }
+                
                 return RedirectToAction(nameof(Index));
             }
             catch

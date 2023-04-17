@@ -1,36 +1,57 @@
-﻿@model IEnumerable<ThienASPMVC08032023.Models.Clip>
-
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<AppUser> UserManager
+@inject SignInManager<AppUser> SignInManager
+@model List<Clip>
 @{
-    ViewData["Title"] = "Index";
 }
 
-<h1>Valorant Clips</h1>
+<partial name="_StatusMessage"></partial>
+
+<h1 class="text-warning">Best Gaming Clips</h1>
+
 
 <div class="mt-4">
     <div class="row">
-        <div class="col-sm-6 col-lg-4">
+        
             @foreach (var clip in Model)
             {
+             <div class="col-sm-6 col-lg-6">
                 <div class="card">
-                    <a href="https://www.youtube.com/watch?v=@clip.Url">
+                    <a asp-controller="Home" asp-action="Detail" asp-route-id="@clip.Id">
                         <img class='card-img-top'
-                         src='https://i3.ytimg.com/vi/@clip.Url/maxresdefault.jpg'
-                         alt="@clip.Url" />
+                             src='https://i3.ytimg.com/vi/@clip.Url/maxresdefault.jpg'/>
                     </a>
-                    <p class="card-text">TimeCreated : @clip.TimeCreated</p>
+                    <p class="card-text text-info">TimeCreated : @clip.TimeCreated</p>
                     <div class="card-body">
-                        <a href="@clip.Url">
-                            <h5 class="card-title">@clip.Name</h5>
-                        </a>
-                        <p class="card-text">Author: @clip.Author</p>
-                        <p class="card-text">
-                            Desctiption : @clip.Description
-                        </p>
+                        <h5>
+                            <a class="text-decoration-none" asp-controller="Home" asp-action="Detail" asp-route-Id="@clip.Id"> @clip.Name</a>
+                        </h5>
+                        <p class="card-text ">Author: <a class="text-decoration-none" href="~/@clip.AuthorUsername/">@clip.AuthorUsername</a> </p>
+                        <a class="btn btn-info" asp-controller="Home" asp-action="Detail" asp-route-Id="@clip.Id"> Watch Details</a>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            @if (await UserManager.GetUserAsync(User) == clip.AuthorUser)
+                            {
+                                <a class="btn btn-success" asp-controller="Home" asp-action="Edit" asp-route-Id="@clip.Id"> Edit</a>
+                                <a class="btn btn-danger" asp-controller="Home" asp-action="Delete" asp-route-Id="@clip.Id"> Delete</a>
+                                
+                            }
+                        }
+
                     </div>
                 </div>
+             </div>
             }
-            
-        </div>
+        
     </div>
 </div>
+
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
             

@@ -30,14 +30,17 @@ namespace ThienASPMVC08032023.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<AppUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public RegisterModel(
+            RoleManager<IdentityRole> roleManager,
             UserManager<AppUser> userManager,
             IUserStore<AppUser> userStore,
             SignInManager<AppUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
+            _roleManager = roleManager;
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
@@ -140,6 +143,18 @@ namespace ThienASPMVC08032023.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
+
+                    //Add Default Role to user after register successfully
+                    string memberRoleId = "0912d02f-7282-4cdc-9517-b5f8e3c60e7b";
+                    IdentityRole memberRole = await _roleManager.FindByIdAsync(memberRoleId) ; 
+
+                    if (memberRole != null)
+                    {
+                        await _userManager.AddToRoleAsync(user, memberRole.Name);
+                    }
+
+
+
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);

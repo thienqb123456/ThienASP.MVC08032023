@@ -1,0 +1,57 @@
+﻿@model IPagedList<ThienASPMVC08032023.Models.AppUser>
+@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+
+@{
+    ViewData["Title"] = "User Manager";
+}
+<h2>@ViewData["Title"] </h2>
+
+<partial name="_StatusMessage">
+
+<table class="table">
+    <tr>
+        <th>UserName</th>
+        <th>Email</th>
+        <th>PhoneNumber</th>
+        <th>Name</th>
+        <th>HomeAddress</th>
+        <th>Hanlder</th>
+    </tr>
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>
+                <p>@user.UserName</p>
+            </td>
+            <td>
+                <p>@user.Email</p>
+            </td>
+            <td>
+                <p>@user.PhoneNumber</p>
+            </td>
+            <td>
+                <p>@user.Name</p>
+            </td>
+            <td>
+                <p>@user.HomeAddress</p>
+            </td>
+            <td>
+                <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-userId="@user.Id">Delete User</a>
+                <a class="btn btn-info btn-sm" asp-action="SetRoleUser" asp-route-userId="@user.Id">Set Role</a>
+
+            </td>
+        </tr>
+    }
+</table>
+
+<br />
+
+<br />
+
+@Html.PagedListPager(Model , currentPage => Url.Action("Index",
+        new { currentPage }),
+        new PagedListRenderOptions {
+            LiElementClasses = new string[] {"page-item"},
+            PageClasses = new string[] {"page-link"}
+        } )

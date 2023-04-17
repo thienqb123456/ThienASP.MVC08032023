@@ -1,0 +1,45 @@
+﻿@using ThienASPMVC08032023.Areas.Admin.Models.User;
+@model SetRoleUserModel
+@{
+    ViewData["Title"] = "Set Role ";
+}
+
+<h3>Select roles for User : @Model.User.UserName </h3>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="RolesUser" class="control-label"></label>
+                @Html.ListBoxFor(m => m.RolesUser,(IEnumerable<SelectListItem>) ViewBag.allRolesName,
+                new {
+                id = "id-select-roles",
+                @class = "w-100"
+                })
+                <span asp-validation-for="RolesUser" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+<script>
+    $("#id-select-roles").multipleSelect({
+        selectAll: false,
+        keepOpen: false,
+        isOpen: false,
+    });
+</script>

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ThienASPMVC08032023.Models
 {
@@ -9,18 +10,25 @@ namespace ThienASPMVC08032023.Models
 
         [Required]
         [Display(Name = "Clip title")]
-        public string? Name { get; set; }
+        public string Name { get; set; }
+
+        
+        public string? AuthorId { get; set; }
+
+        [ForeignKey("AuthorId")]
+        public AppUser AuthorUser { get; set; }
+
+        public string? AuthorUsername { get; set; }
 
         [Required]
-        [Display(Name = "Clip Author")]
-        public string? Author { get; set; }
+        public string Description { get; set; }
 
         [Required]
-        public string? Description { get; set; }
+        public string Url { get; set; }
 
-        [Required]
-        public string? Url { get; set; }
+        public List<MainComment>? MainComments { get; set; }
 
-        public DateTime TimeCreated { get; set; } = DateTime.Now;
+
+        public DateTime TimeCreated { get; set; } = DateTime.Now;   
     }
 }

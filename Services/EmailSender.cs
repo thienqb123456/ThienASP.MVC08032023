@@ -8,23 +8,24 @@ namespace ThienASPMVC08032023.Services
     public class EmailSender : IEmailSender
     {
         private readonly ILogger _logger;
+        public AuthMessageSenderOptions _Options { get; } //Set with Secret Manager.
+
 
         public EmailSender(IOptions<AuthMessageSenderOptions> optionsAccessor,
                            ILogger<EmailSender> logger)
         {
-            Options = optionsAccessor.Value;
+            _Options = optionsAccessor.Value;
             _logger = logger;
         }
 
-        public AuthMessageSenderOptions Options { get; } //Set with Secret Manager.
 
         public async Task SendEmailAsync(string toEmail, string subject, string message)
         {
-            if (string.IsNullOrEmpty(Options.SendGridKey))
+            if (string.IsNullOrEmpty(_Options.SendGridKey))
             {
                 throw new Exception("Null SendGridKey");
             }
-            await Execute(Options.SendGridKey, subject, message, toEmail);
+            await Execute(_Options.SendGridKey, subject, message, toEmail);
         }
 
         public async Task Execute(string apiKey, string subject, string message, string toEmail)
