@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using NuGet.Protocol.Core.Types;
 using ThienASPMVC08032023.Database;
 using ThienASPMVC08032023.Models;
+using ThienASPMVC08032023.Repository;
 using ThienASPMVC08032023.Services;
 
 namespace ThienASPMVC08032023
@@ -18,8 +18,7 @@ namespace ThienASPMVC08032023
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(
-                builder.Configuration.GetConnectionString("DefaultConnection")));
-
+                    builder.Configuration.GetConnectionString("DefaultConnection")));
 
             //Add Identity Services
 
@@ -29,6 +28,7 @@ namespace ThienASPMVC08032023
 
             builder.Services.AddRazorPages();
 
+            builder.Services.AddScoped<IRepositoryClip, Repository.RepositoryClip>();
 
             builder.Services.AddTransient<IEmailSender, EmailSender>();
             //Configure Get  Sendgrid ApiKey in appsetting.json

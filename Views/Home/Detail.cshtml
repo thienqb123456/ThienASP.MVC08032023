@@ -13,44 +13,45 @@
 <div class="mt-4">
     <div class="row">
         <div class="card">
-            <div class="d-flex flex-row-reverse">
-                @if (SignInManager.IsSignedIn(User))
-                {
-                    @if (await UserManager.GetUserAsync(User) == Model.AuthorUser)
-                    {
-                        <a class="btn btn-success" asp-controller="Home" asp-action="Edit" asp-route-Id="@Model.Id"> Edit</a>
-                        <a class="btn btn-danger" asp-controller="Home" asp-action="Delete" asp-route-Id="@Model.Id"> Delete</a>
-
-                    }
-                }
-            </div>
+           
             <div >
-                <iframe class="col-sm-12 col-lg-12" width=" 1280" height="720" src="https://www.youtube.com/embed/@Model.Url"
+                <iframe class="col-sm-12 col-lg-12" width="1280" height="720" src="https://www.youtube.com/embed/@Model.Url"
                         title="YouTube video player" frameborder="0" allow="accelerometer;
                             autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;
                             web-share" allowfullscreen>
                 </iframe>
             </div>
-           
+            <div class="d-flex ">
+                <p class="col text-info card-text">TimeCreated : @Model.TimeCreated</p>
+                <div >
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        @if (await UserManager.GetUserAsync(User) == Model.AuthorUser)
+                        {
+                            <a class="btn btn-danger" asp-controller="Home" asp-action="Delete" asp-route-Id="@Model.Id"> Delete</a>
+                            <a class="btn btn-success" asp-controller="Home" asp-action="Edit" asp-route-Id="@Model.Id"> Edit</a>
+                        }
+                    }
+                </div>
 
-           <p class="col card-text">TimeCreated : @Model.TimeCreated</p>
+            </div>
 
             <div class="card-body">
-                <h5 class="card-title">@Model.Name</h5>
+                <h5 class="card-title text-warning">@Model.Name</h5>
                 <p class="card-text">Author: <a class="text-decoration-none fw-bold mb-1" href="~/@Model.AuthorUsername"> @Model.AuthorUsername </a> </p>
 
-                <p class="card-text">  Description : @Model.Description </p>
+                <p class="card-text "> Description : <strong class="text-warning">@Model.Description</strong>  </p>
             </div>
         </div>
 
         <div id="comment-section">
-            @if (Model.MainComments.Any() == false )
+            @if (Model.MainComments!.Any() == false )
             {
                 <h5>There's no comment here </h5>
 
             } else
             {
-                @foreach (var comment in Model.MainComments)
+                @foreach (var comment in Model.MainComments!)
                 {
                     <div class="card">
                         <div class="card-body">

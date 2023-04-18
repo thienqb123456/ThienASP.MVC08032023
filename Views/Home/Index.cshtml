@@ -15,7 +15,7 @@
         
             @foreach (var clip in Model)
             {
-             <div class="col-sm-6 col-lg-6">
+             <div class="col-sm-6 col-lg-4">
                 <div class="card">
                     <a asp-controller="Home" asp-action="Detail" asp-route-id="@clip.Id">
                         <img class='card-img-top'
@@ -23,7 +23,7 @@
                     </a>
                     <p class="card-text text-info">TimeCreated : @clip.TimeCreated</p>
                     <div class="card-body">
-                        <h5>
+                        <h5 class="text-truncate">
                             <a class="text-decoration-none" asp-controller="Home" asp-action="Detail" asp-route-Id="@clip.Id"> @clip.Name</a>
                         </h5>
                         <p class="card-text ">Author: <a class="text-decoration-none" href="~/@clip.AuthorUsername/">@clip.AuthorUsername</a> </p>
