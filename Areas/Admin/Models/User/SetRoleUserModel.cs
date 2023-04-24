@@ -5,9 +5,9 @@ namespace ThienASPMVC08032023.Areas.Admin.Models.User
 {
     public class SetRoleUserModel
     {
-        public AppUser User { get; set; }
+        public AppUser? User { get; set; }
 
-        public IList<string> RolesUser { get; set; }
+        public IList<string>? RolesUser { get; set; }
 
 
     }

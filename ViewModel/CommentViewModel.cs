@@ -5,9 +5,6 @@ namespace ThienASPMVC08032023.ViewModel
     public class CommentViewModel
     {
         [Required]
-        public string? UserId { get; set; }
-
-        [Required]
         public int ClipId { get; set; }
 
         [Required]

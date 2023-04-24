@@ -5,14 +5,13 @@
 
 <div class="card">
     <div class="card-body">
-        <a class="text-decoration-none fw-bold mb-1" href="~/@Model.UserName"> @Model.UserName </a>
+        <a class="text-decoration-none fw-bold mb-1" href="~/@Model.User!.UserName"> @Model.User!.UserName </a>
         <p class="text-muted small mb-0"> Shared publicly - @Model.TimeCreated</p>
         <form asp-controller="Comment" asp-action="Edit" asp-route-id="@Model.Id" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="@Model.Id" />
             <input type="hidden" asp-for="@Model.ClipId" />
             <input type="hidden" asp-for="@Model.UserId" />
-            <input type="hidden" asp-for="@Model.UserName" />
 
             <div class="form-group">
                 <label asp-for="CommentMsg" class="control-label"></label>

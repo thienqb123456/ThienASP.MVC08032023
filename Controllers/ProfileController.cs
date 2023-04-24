@@ -1,5 +1,4 @@
 ﻿
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ThienASPMVC08032023.Database;
@@ -10,18 +9,12 @@ namespace ThienASPMVC08032023.Controllers
 
     public class ProfileController : Controller
     {
-        private readonly ILogger<ProfileController> _logger;
-        private readonly UserManager<AppUser> _userManager;
         private readonly AppDbContext _context;
 
-        public ProfileController(AppDbContext context,ILogger<ProfileController> logger, UserManager<AppUser> userManager)
+        public ProfileController(AppDbContext context)
         {
-            _logger = logger;
-            _userManager = userManager;
             _context = context;
         }
-
-
 
 
         // GET: ProfileController

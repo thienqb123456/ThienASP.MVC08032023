@@ -27,7 +27,7 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
         }
 
         [TempData]
-        public string StatusMessage { get; set; }
+        public string? StatusMessage { get; set; }
 
 
 
@@ -107,9 +107,9 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
 
                 IList<string> currentRolesUser = await _userManager.GetRolesAsync(SetRoleUserModel.User);
 
-                IEnumerable<string> deleteRolesUser = currentRolesUser.Where(role => !SetRoleUserModel.RolesUser.Contains(role));
+                IEnumerable<string> deleteRolesUser = currentRolesUser.Where(role => !SetRoleUserModel.RolesUser!.Contains(role));
 
-                IEnumerable<string> AddRolesUser = SetRoleUserModel.RolesUser.Where(role => !currentRolesUser.Contains(role));
+                IEnumerable<string> AddRolesUser = SetRoleUserModel.RolesUser!.Where(role => !currentRolesUser.Contains(role));
 
                 var resultDeleteRolesUser = await _userManager.RemoveFromRolesAsync(SetRoleUserModel.User, deleteRolesUser);
 

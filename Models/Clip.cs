@@ -12,22 +12,23 @@ namespace ThienASPMVC08032023.Models
         [Display(Name = "Clip title")]
         public string? Name { get; set; }
 
-        
-        public string? AuthorId { get; set; }
-
-        [ForeignKey("AuthorId")]
-        public AppUser? AuthorUser { get; set; }
-
-        public string? AuthorUsername { get; set; }
-
         [Required]
         public string? Description { get; set; }
 
         [Required]
         public string? Url { get; set; }
 
-        public List<MainComment>? MainComments { get; set; }
+        public int CategoryId { get; set; }
 
+        [ForeignKey("CategoryId")]
+        public Category? Category { get; set; }
+        
+        public string? AuthorId { get; set; }
+
+        [ForeignKey("AuthorId")]
+        public AppUser? AuthorUser { get; set; }
+
+        public List<MainComment>? MainComments { get; set; }
 
         public DateTime TimeCreated { get; set; } = DateTime.Now;   
     }

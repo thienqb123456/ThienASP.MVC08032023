@@ -17,8 +17,12 @@
 <table class="table">
     <thead>
         <tr>
+           
             <th>
-                <a class="text-decoration-none" asp-controller="Clips" asp-action="Index" asp-route-sortOrder="@ViewData["SortbyName"]">Name</a>
+                Name
+            </th>
+            <th>
+                Category
             </th>
             <th>
                 AuthorUsername
@@ -27,9 +31,9 @@
                 Url
             </th>
             <th>
-                <a class="text-decoration-none" asp-controller="Clips" asp-action="Index" asp-route-sortOrder="@ViewData["SortbyTimeCreated"]">TimeCreated</a>
+                TimeCreated
             </th>
-            <th></th>
+            <th>Handle</th>
         </tr>
     </thead>
     <tbody>
@@ -39,7 +43,10 @@
                     @clip.Name
             </td>
             <td>
-                    @clip.AuthorUsername
+                    @clip.Category!.Name
+            </td>
+            <td>
+                    @clip.AuthorUser!.UserName
             </td>
             <td>
                     @clip.Url

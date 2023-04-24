@@ -31,6 +31,9 @@
                         @if (User.IsInRole("admin") || User.IsInRole("manager"))
                         {
                             <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin" asp-controller="Category" asp-action="Index">Category Manager</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" asp-area="Admin" asp-controller="Clips" asp-action="Index">Clips Manager</a>
                             </li>
                             <li class="nav-item">

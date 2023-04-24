@@ -1,22 +1,23 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using ThienASPMVC08032023.Database;
 using ThienASPMVC08032023.Models;
-using ThienASPMVC08032023.Repository;
+using ThienASPMVC08032023.Repository.InterfaceRepo;
 using X.PagedList;
 
 namespace ThienASPMVC08032023.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IRepositoryClip _repo;
+        private readonly IRepositoryWrapper _repo;
         private readonly ILogger<HomeController> _logger;
         private readonly UserManager<AppUser> _userManager;
 
-        public HomeController(IRepositoryClip repo, UserManager<AppUser> userManager, ILogger<HomeController> logger, AppDbContext context)
+        public HomeController(IRepositoryWrapper repo, UserManager<AppUser> userManager, ILogger<HomeController> logger, AppDbContext context)
         {
             _logger = logger;
             _userManager = userManager;
@@ -28,42 +29,45 @@ namespace ThienASPMVC08032023.Controllers
 
         public async Task <ActionResult> Index(string searchString)
         {
-            List<Clip> clips = new List<Clip>();
-            var qr = _repo.GetClips();
+            
+            var clips = await _repo.ClipRepo.GetAllClipsAsync();
             if (!string.IsNullOrEmpty(searchString))
             {
-                clips = qr.Where(c => c.Name!.Contains(searchString)
-                           || c.Description!.Contains(searchString)).ToList();
-            } else
-            {
-                clips = await qr.ToListAsync();
+                clips = clips.Where(c => c.Name!.Contains(searchString)
+                                     || c.Description!.Contains(searchString)).ToList();
             }
-
             return View(clips);
         }
+
+
 
         [HttpGet("/clip/{id}")]
         public async Task<ActionResult> Detail(int id)
         {
-            var clip = await _repo.GetClipByIdAsync(id);
+            var clip = await _repo.ClipRepo.GetClipByIdAsync(id);
             if (clip == null) { return NotFound($"Not found clip has id = {id}"); }
             return View(clip);
         }
 
+
         [Authorize]
         [HttpGet("{action}")]
-        public ActionResult Upload() { return View(); }
+        public async Task<ActionResult> Upload() 
+        { 
+            var categories = await  _repo.CategoryRepo.GetAllCategoriesAsync();
+            ViewBag.ListCategories = new SelectList(categories, "Id", "Name");
+            return View(); 
+        }
        
         [Authorize]
         [HttpPost("{action}")]
-        public async Task<ActionResult> Upload([Bind("Id,Name,Description,Url")] Clip clipVM)
+        public async Task<ActionResult> Upload([Bind("Id,Name,Description,Url,CategoryId")] Clip clipVM)
         {
-            var currentUser = await _userManager.GetUserAsync(User);
+            var currentUser = await _userManager.GetUserAsync(this.User);
             clipVM.AuthorUser = currentUser;
-            clipVM.AuthorUsername = currentUser.UserName;
             if (ModelState.IsValid)
             {
-                _repo.CreateClip(clipVM);
+                _repo.ClipRepo.CreateClip(clipVM);
                 await _repo.SaveAsync();
                 StatusMessage = $"Uploaded clip Name :  {clipVM.Name} Successfully!";
             }
@@ -75,64 +79,67 @@ namespace ThienASPMVC08032023.Controllers
         [HttpGet("/clip/{action}/{id}")]
         public async Task<ActionResult> Edit(int id)
         {
-            var clip = await _repo.GetClipByIdAsync(id);
+            var categories = await _repo.CategoryRepo.GetAllCategoriesAsync();
+            ViewBag.ListCategories = new SelectList(categories, "Id", "Name");
+            var clip = await _repo.ClipRepo.GetClipByIdAsync(id);
             if(clip == null) { return NotFound($"Not Found Clip has id ={id}"); }
-            var currentUser = await _userManager.GetUserAsync(User);
-            if (clip.AuthorUser != currentUser  ) return NotFound("U do not have permisson to access ");
+            var currentUser = await _userManager.GetUserAsync(this.User);
+            if (clip.AuthorUser!.Id != currentUser.Id ) return NotFound("U do not have permisson to access ");
             return View(clip);
 
         }
 
         [Authorize]
         [HttpPost("/clip/{action}/{id}")]
-        public async Task<ActionResult> Edit([Bind("Id,Name,Description,Url")] Clip clipVM)
+        public async Task<ActionResult> Edit(int id,[Bind("Id,Name,Description,Url,CategoryId")] Clip clipVM)
         {
-            var newClip = await _repo.GetClipByIdAsync(clipVM.Id);
+            if (id != clipVM.Id) { return NotFound($" id {id} != clipVM.Id {clipVM.Id}"); }
+            var newClip = await _repo.ClipRepo.GetClipByIdAsync(id);
             if (ModelState.IsValid && newClip != clipVM)
             {
                 newClip.Name = clipVM.Name;
                 newClip.Description = clipVM.Description;
                 newClip.Url = clipVM.Url;
-                _repo.UpdateClip(newClip);
+                newClip.CategoryId = clipVM.CategoryId;
+                _repo.ClipRepo.UpdateClip(newClip);
                 await _repo.SaveAsync();
                 StatusMessage = $"Updated Clip has name : {clipVM.Name} Successfully!";
             }
             return RedirectToAction("Detail", "Home", new { id = clipVM.Id });
         }
 
-
         [Authorize]
         [HttpGet("/clip/{action}/{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var clip = await _repo.GetClipByIdAsync(id);
+            var clip = await _repo.ClipRepo.GetClipByIdAsync(id);
             if (clip == null) { return NotFound($"Not Found Clip has id ={id}"); }
-            var currentUser = await _userManager.GetUserAsync(User);
-            if (clip.AuthorUser != currentUser)
+            var currentUser = await _userManager.GetUserAsync(this.User);
+            if (clip.AuthorUser!.Id != currentUser.Id)
             {
-                return NotFound("U do not have permisson to access ");
+                return NotFound("accessdenied");
             }
             return View(clip);
         }
 
         [Authorize]
-        [HttpPost("/clip/{action}/{Id}")]
-        public async Task<ActionResult> DeleteConfirm(int id)
+        [HttpPost("/clip/{action}/{id}")]
+        public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            var clip = await _repo.GetClipByIdAsync(id);
+            var clip = await _repo.ClipRepo.GetClipByIdAsync(id);
             if (clip == null) { return NotFound($"Not Found Clip has id ={id}"); }
             var currentUser = await _userManager.GetUserAsync(User);
-            if (clip.AuthorUser != currentUser)
+            if (clip.AuthorUser!.Id == currentUser.Id)
             {
-                return NotFound("U do not have permisson to access ");
-            } else
-            {
-                await _repo.DeleteClipAsync(id);
+                _repo.ClipRepo.DeleteClip(clip);
                 await _repo.SaveAsync();
                 StatusMessage = $"Deleted Clip {clip?.Name} Successfully!";
+                return RedirectToAction("Index");
             }
-
-            return RedirectToAction("Index");
+            else
+            {
+                return NotFound("/AccessDenied/");
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

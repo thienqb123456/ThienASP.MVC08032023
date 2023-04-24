@@ -14,7 +14,7 @@
                             web-share" allowfullscreen>
             </iframe>
             <p class="card-text">TimeCreated : @Model.TimeCreated</p>
-            <p class="card-text">Author: <a class="text-decoration-none fw-bold mb-1" href="~/@Model.AuthorUsername"> @Model.AuthorUsername </a> </p>
+            <p class="card-text">Author: <a class="text-decoration-none fw-bold mb-1" href="~/@Model.AuthorUser!.UserName"> @Model.AuthorUser!.UserName </a> </p>
 
             <div class="row">
                 <div class="col-md-4">
@@ -36,6 +36,14 @@
                             <input asp-for="Url" class="form-control" />
                             <span asp-validation-for="Url" class="text-danger"></span>
                         </div>
+
+                        <div class="form-group">
+                            <label asp-for="Category" class="control-label"></label>
+                            <select asp-for="CategoryId" asp-items="ViewBag.ListCategories" class="w-100"> </select>
+                            <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        </div>
+
+
                         <div class="form-group">
                             <input type="submit" value="Save" class="btn btn-primary" />
                         </div>

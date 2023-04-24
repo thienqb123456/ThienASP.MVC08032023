@@ -11,20 +11,17 @@ namespace ThienASPMVC08032023.Models
         [Required]
         public string? CommentMsg { get; set; }
 
-        public string? UserName { get; set; }
-
         public string? UserId { get; set; }
 
         [Required]
         [ForeignKey("UserId")]
-        public AppUser User { get; set; }
-
+        public AppUser? User { get; set; }
 
         public int? ClipId { get; set; }
 
         [Required]
         [ForeignKey("ClipId")]
-        public Clip Clip { get; set; }
+        public Clip? Clip { get; set; }
 
         public DateTime TimeCreated { get; set; } = DateTime.Now;
     }

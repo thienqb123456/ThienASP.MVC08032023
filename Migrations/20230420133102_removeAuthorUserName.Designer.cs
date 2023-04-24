@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ThienASPMVC08032023.Database;
 
@@ -11,9 +12,10 @@ using ThienASPMVC08032023.Database;
 namespace ThienASPMVC08032023.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230420133102_removeAuthorUserName")]
+    partial class removeAuthorUserName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -312,6 +314,9 @@ namespace ThienASPMVC08032023.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ClipId");
@@ -379,7 +384,7 @@ namespace ThienASPMVC08032023.Migrations
                         .HasForeignKey("AuthorId");
 
                     b.HasOne("ThienASPMVC08032023.Models.Category", "Category")
-                        .WithMany("Clips")
+                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -409,11 +414,6 @@ namespace ThienASPMVC08032023.Migrations
                 });
 
             modelBuilder.Entity("ThienASPMVC08032023.Models.AppUser", b =>
-                {
-                    b.Navigation("Clips");
-                });
-
-            modelBuilder.Entity("ThienASPMVC08032023.Models.Category", b =>
                 {
                     b.Navigation("Clips");
                 });

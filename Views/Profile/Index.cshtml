@@ -42,7 +42,7 @@
                                 <h5>
                                     <a class="text-decoration-none" asp-controller="Home" asp-action="Detail" asp-route-id="@clip.Id"> @clip.Name</a>
                                 </h5>
-                                <p class="card-text ">Author: <a class="text-decoration-none" href="~/@clip.AuthorUsername/">@clip.AuthorUsername</a> </p>
+                                <p class="card-text ">Author: <a class="text-decoration-none" href="~/@clip.AuthorUser!.UserName/">@clip.AuthorUser!.UserName</a> </p>
                                 <a class="btn btn-info" asp-controller="Home" asp-action="Detail" asp-route-Id="@clip.Id"> Watch Details</a>
                                 @if (SignInManager.IsSignedIn(User))
                                 {

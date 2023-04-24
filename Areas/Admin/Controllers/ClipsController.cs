@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using ThienASPMVC08032023.Models;
-using ThienASPMVC08032023.Repository;
+using ThienASPMVC08032023.Repository.InterfaceRepo;
 using X.PagedList;
 
 namespace ThienASPMVC08032023.Areas.Admin.Controllers
@@ -12,14 +14,14 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
     [Route("/{controller}/{action=Index}/{id:int?}")]
     public class ClipsController : Controller
     {
-        private readonly IRepositoryClip _repo;
+        private readonly IRepositoryWrapper _repo;
         private readonly ILogger<ClipsController> _logger;
         private readonly UserManager<AppUser> _userManager;
 
         [TempData]
         public string? StatusMessage { get; set; }
 
-        public ClipsController(IRepositoryClip repo, ILogger<ClipsController> logger, UserManager<AppUser> userManager)
+        public ClipsController(IRepositoryWrapper repo, ILogger<ClipsController> logger, UserManager<AppUser> userManager)
         {
             _repo = repo;
             _logger = logger;
@@ -28,28 +30,9 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
 
         // GET: Clips
         [HttpGet]
-        public ActionResult Index(string sortOrder, int? currentPage, int? pageSize)
+        public async Task<ActionResult> Index(int? currentPage, int? pageSize)
         {
-            var qrClips = _repo.GetClips();
-            //sort
-            ViewData["SortbyName"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewData["SortbyTimeCreated"] = sortOrder == "TimeCreated" ? "TimeCreated_desc" : "TimeCreated";
-
-            switch (sortOrder)
-            {
-                case "name_desc":
-                    qrClips = qrClips.OrderByDescending(c => c.Name);
-                    break;
-                case "TimeCreated":
-                    qrClips = qrClips.OrderBy(c => c.TimeCreated);
-                    break;
-                case "TimeCreated_desc":
-                    qrClips = qrClips.OrderByDescending(c => c.TimeCreated);
-                    break;
-                default:
-                    qrClips = qrClips.OrderBy(c => c.Name);
-                    break;
-            }
+            var qrClips = await _repo.ClipRepo.GetAllClipsAsync();
             // paging
             if (currentPage == null)
             {
@@ -65,27 +48,30 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
         // GET: Clips/Details/5
         public async Task<ActionResult> Details(int id)
         {
-            var clip = await _repo.GetClipByIdAsync(id);
+            var clip = await _repo.ClipRepo.GetClipByIdAsync(id);
             if (clip == null) { return NotFound($"Not Found Clip has id ={id}"); }
             return View(clip);
         }
 
         // GET: Clips/Create
-        public ActionResult Create() { return View(); }
+        public async Task<ActionResult> Create()
+        {
+            var categories = await _repo.CategoryRepo.GetAllCategoriesAsync();
+            ViewBag.listCategories = new SelectList(categories, "Id", "Name");
+            return View();
+        }
       
         // POST: Clips/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind("Name,Description,Url")] Clip clipVM)
+        public async Task<ActionResult> Create([Bind("Name,Description,Url,CategoryId")] Clip clipVM)
         {
+            
             var currentUser = await _userManager.GetUserAsync(User);
             if (ModelState.IsValid)
             {
                 clipVM.AuthorUser = currentUser;
-                clipVM.AuthorUsername = currentUser.UserName;
-                _repo.CreateClip(clipVM);
+                _repo.ClipRepo.CreateClip (clipVM);
                 await _repo.SaveAsync();
                 StatusMessage = $"Uploaded clip Name :  {clipVM.Name} Successfully!";
             }
@@ -95,25 +81,27 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
         // GET: Clips/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
-            var clip = await _repo.GetClipByIdAsync(id);
+            var categories = await _repo.CategoryRepo.GetAllCategoriesAsync();
+            ViewBag.listCategories = new SelectList(categories, "Id", "Name");
+            var clip = await _repo.ClipRepo.GetClipByIdAsync(id);
             if (clip == null) { return NotFound($"Not Found Clip has id ={id}"); }
             return View(clip);
         }
 
         // POST: Clips/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind("Id,Name,Description,Url")] Clip clipVM)
+        public async Task<ActionResult> Edit(int id,[Bind("Id,Name,Description,Url,CategoryId")] Clip clipVM)
         {
+            if(id != clipVM.Id) { return NotFound($"wrong id, {id} != {clipVM.Id}"); }
             if (ModelState.IsValid)
             {
-                var newClip = await _repo.GetClipByIdAsync(clipVM.Id);
+                var newClip = await _repo.ClipRepo.GetClipByIdAsync(id);
                 newClip.Name = clipVM.Name;
                 newClip.Description = clipVM.Description;
                 newClip.Url = clipVM.Url;
-                _repo.UpdateClip(newClip);
+                newClip.CategoryId = clipVM.CategoryId;
+                _repo.ClipRepo.UpdateClip(newClip);
                 await _repo.SaveAsync();
                 StatusMessage = $"Edited Clip name : {clipVM.Name} Successfully!";
             }
@@ -123,7 +111,7 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
         // GET: Clips/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
-            var clip =await _repo.GetClipByIdAsync(id);
+            var clip =await _repo.ClipRepo.GetClipByIdAsync(id);
             if (clip == null) { return NotFound($"Not Found Clip has id ={id}"); }
             return View(clip);
         }
@@ -133,7 +121,8 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            await _repo.DeleteClipAsync(id); 
+            var clip = await _repo.ClipRepo.GetClipByIdAsync(id);
+            _repo.ClipRepo.DeleteClip(clip);
             await _repo.SaveAsync();
             StatusMessage = $"Deleted clip successfully!";
             return RedirectToAction(nameof(Index));

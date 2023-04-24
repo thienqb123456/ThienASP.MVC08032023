@@ -7,7 +7,7 @@
 <div>
     <h4>Clip</h4>
     <hr />
-    <a class="text-decoration-none fw-bold mb-1" href="~/@Model.UserName"> @Model.UserName </a>
+    <a class="text-decoration-none fw-bold mb-1" href="~/@Model.User!.UserName"> @Model.User!.UserName </a>
     <p class="text-muted small mb-0"> Shared publicly - @Model.TimeCreated</p>
     <p class="mt-3 mb-4 pb-2"> @Model.CommentMsg</p>
     <form asp-controller="Comment" asp-action="DeleteConfirm" method="post">
