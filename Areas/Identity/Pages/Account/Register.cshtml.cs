@@ -134,7 +134,6 @@ namespace ThienASPMVC08032023.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
-                user.HomeAddress = Input.HomeAddress;
                 user.Name = Input.Name;
 
                 await _userStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);

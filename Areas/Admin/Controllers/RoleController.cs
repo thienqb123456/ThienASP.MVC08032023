@@ -15,14 +15,12 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<AppUser> _userManager;
         private readonly ILogger<RoleController> _logger;
-        private readonly AppDbContext _context;
 
-        public RoleController(RoleManager<IdentityRole> roleManager, UserManager<AppUser> userManager, ILogger<RoleController> logger, AppDbContext context)
+        public RoleController(RoleManager<IdentityRole> roleManager, UserManager<AppUser> userManager, ILogger<RoleController> logger)
         {
             _roleManager = roleManager;
             _userManager = userManager;
             _logger = logger;
-            _context = context;
         }
 
         [TempData]

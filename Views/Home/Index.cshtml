@@ -3,18 +3,24 @@
 @inject SignInManager<AppUser> SignInManager
 @model List<Clip>
 @{
+    List<Category> categories = ViewBag.categories;
 }
 
 <partial name="_StatusMessage"></partial>
 
-<div>
-    <h1 class="text-warning">Best Gaming Clips</h1>
-
+<div class="row">
+    <h1 class="col-sm-12 col-md-12 col-lg-6 text-warning">Best Gaming Clips</h1>
+    <div class="col"></div>
+    <div class="col-sm- col-lg-4 btn-group">
+        @foreach (var cate in categories)
+        {
+            <a class="mt-4 btn btn-outline-warning align-text-bottom" asp-route-cateId="@cate.Id">@cate.Name</a>
+        }
+    </div>
 </div>
 
 <div class="mt-4">
     <div class="row">
-        
             @foreach (var clip in Model)
             {
              <div class="col-sm-6 col-lg-4">
@@ -36,7 +42,6 @@
                             {
                                 <a class="btn btn-success" asp-controller="Home" asp-action="Edit" asp-route-Id="@clip.Id"> Edit</a>
                                 <a class="btn btn-danger" asp-controller="Home" asp-action="Delete" asp-route-Id="@clip.Id"> Delete</a>
-                                
                             }
                         }
 
@@ -49,11 +54,9 @@
 </div>
 
 
-
-
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
-            
+

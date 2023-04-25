@@ -30,37 +30,20 @@
                         
                         @if (User.IsInRole("admin") || User.IsInRole("manager"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="Admin" asp-controller="Category" asp-action="Index">Category Manager</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle active" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Admin Manager</a>
+                                <div class="dropdown-menu ">
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Category" asp-action="Index">Category Manager</a>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Clips" asp-action="Index">Clips Manager</a>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Role" asp-action="Index">Roles Manager</a>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="Index">Users Manager</a>
+                                </div>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="Admin" asp-controller="Clips" asp-action="Index">Clips Manager</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="Admin" asp-controller="Role" asp-action="Index">Roles Manager</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="Admin" asp-controller="User" asp-action="Index">Users Manager</a>
-                            </li>
-                            
                         }
-
-                        
-
                         <li class="nav-item ">
                             <a class="nav-link btn btn-outline-success" asp-area="" asp-controller="Home" asp-action="Upload">Upload</a>
                         </li>
 
-                        @*<li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">Separated link</a>
-                            </div>
-                        </li>*@
                     </ul>
                     <form class="d-flex" asp-controller="Home" asp-action="Index" method="get">
                         <input name="searchString" class="form-control me-sm-2" type="search" placeholder="Search">

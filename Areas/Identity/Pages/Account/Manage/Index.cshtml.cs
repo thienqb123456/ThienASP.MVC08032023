@@ -84,8 +84,6 @@ namespace ThienASPMVC08032023.Areas.Identity.Pages.Account.Manage
             {
                 PhoneNumber = phoneNumber,
                 Name = user.Name,
-                HomeAddress = user.HomeAddress,
-
             };
         }
 
@@ -132,11 +130,6 @@ namespace ThienASPMVC08032023.Areas.Identity.Pages.Account.Manage
             {
                 user.Name = Input.Name;
                 
-            }
-
-            if (Input.HomeAddress != user.HomeAddress)
-            {
-                user.HomeAddress = Input.HomeAddress;
             }
 
             await _userManager.UpdateAsync(user);

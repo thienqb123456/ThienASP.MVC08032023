@@ -26,6 +26,7 @@ namespace ThienASPMVC08032023.Repository.Repo
                                             .Include(cl => cl.AuthorUser!)
                                             .Include(cl => cl.Category)
                                             .Include(cl => cl.MainComments)
+                                            .ThenInclude(cmt=> cmt.User)
                                             .FirstOrDefaultAsync();
             return clip!;
         }

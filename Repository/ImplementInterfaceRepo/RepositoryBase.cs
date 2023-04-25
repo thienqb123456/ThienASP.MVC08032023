@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using ThienASPMVC08032023.Database;
 using ThienASPMVC08032023.Repository.InterfaceRepo;
 

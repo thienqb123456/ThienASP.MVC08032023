@@ -1,8 +1,6 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ThienASPMVC08032023.Database;
-using ThienASPMVC08032023.Models;
 
 namespace ThienASPMVC08032023.Controllers
 {

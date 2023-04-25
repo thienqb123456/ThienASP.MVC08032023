@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using ThienASPMVC08032023.Models;
 using ThienASPMVC08032023.Repository.InterfaceRepo;
 using X.PagedList;
@@ -66,7 +65,6 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind("Name,Description,Url,CategoryId")] Clip clipVM)
         {
-            
             var currentUser = await _userManager.GetUserAsync(User);
             if (ModelState.IsValid)
             {

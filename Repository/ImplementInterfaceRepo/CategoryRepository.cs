@@ -22,6 +22,7 @@ namespace ThienASPMVC08032023.Repository.Repo
         {
             var category = await FindByCondition(ct => ct.Id == categoryId)
                                  .Include(ct => ct.Clips)
+                                 .ThenInclude(cl => cl.AuthorUser)
                                  .FirstOrDefaultAsync();
             return category!;
         }

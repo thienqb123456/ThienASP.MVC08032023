@@ -15,7 +15,6 @@
         <th>Email</th>
         <th>PhoneNumber</th>
         <th>Name</th>
-        <th>HomeAddress</th>
         <th>Hanlder</th>
     </tr>
     @foreach (var user in Model)
@@ -32,9 +31,6 @@
             </td>
             <td>
                 <p>@user.Name</p>
-            </td>
-            <td>
-                <p>@user.HomeAddress</p>
             </td>
             <td>
                 <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-userId="@user.Id">Delete User</a>

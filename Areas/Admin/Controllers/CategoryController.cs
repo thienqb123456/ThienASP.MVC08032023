@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ThienASPMVC08032023.Models;
 using ThienASPMVC08032023.Repository.InterfaceRepo;
 
 namespace ThienASPMVC08032023.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "admin")]
     [Area("Admin")]
     [Route("/{Controller}/{Action=Index}/{id?}")]
     public class CategoryController : Controller

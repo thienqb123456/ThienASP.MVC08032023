@@ -5,10 +5,10 @@ namespace ThienASPMVC08032023.Repository.Repo
 {
     public class RepositoryWrapper : IRepositoryWrapper
     {
-        private AppDbContext _context;
-        private IClipRepository _clipRepo;
-        private ICategoryRepository _categoryRepo;
-        private ICommentRepository _commentRepo;
+        private readonly AppDbContext _context;
+        private readonly IClipRepository _clipRepo;
+        private readonly ICategoryRepository _categoryRepo;
+        private readonly ICommentRepository _commentRepo;
 
         public IClipRepository ClipRepo { get { return _clipRepo; } }
 

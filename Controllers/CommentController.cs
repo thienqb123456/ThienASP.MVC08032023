@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ThienASPMVC08032023.Database;
 using ThienASPMVC08032023.Models;
 using ThienASPMVC08032023.Repository.InterfaceRepo;
 using ThienASPMVC08032023.ViewModel;

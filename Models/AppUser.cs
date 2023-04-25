@@ -9,9 +9,6 @@ namespace ThienASPMVC08032023.Models
         [PersonalData]
         public string? Name { get; set; }
 
-        [PersonalData]
-        public string? HomeAddress { get; set; }
-
         public List<Clip>? Clips { get; set; }
 
     }
