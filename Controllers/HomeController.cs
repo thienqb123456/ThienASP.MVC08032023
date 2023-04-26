@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 using ThienASPMVC08032023.Database;
 using ThienASPMVC08032023.Models;
@@ -12,12 +13,10 @@ namespace ThienASPMVC08032023.Controllers
     public class HomeController : Controller
     {
         private readonly IRepositoryWrapper _repo;
-        private readonly ILogger<HomeController> _logger;
         private readonly UserManager<AppUser> _userManager;
 
-        public HomeController(IRepositoryWrapper repo, UserManager<AppUser> userManager, ILogger<HomeController> logger, AppDbContext context)
+        public HomeController(IRepositoryWrapper repo, UserManager<AppUser> userManager)
         {
-            _logger = logger;
             _userManager = userManager;
             _repo = repo;
         }
@@ -25,23 +24,15 @@ namespace ThienASPMVC08032023.Controllers
         [TempData]
         public string? StatusMessage { get; set; }
 
-        public async Task<ActionResult> Index(string searchString, int? cateId)
+        public async Task<ActionResult> Index(string searchString, string sortBy, int? cateId)
         {
-            
-            var clips = await _repo.ClipRepo.GetAllClipsAsync();
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                clips = clips.Where(c => c.Name!.Contains(searchString)
-                                     || c.Description!.Contains(searchString)).ToList();
-            } 
+            var clips = await _repo.ClipRepo.GetAllClipsAsync(searchString, sortBy);
             if (cateId != null)
             {
                 clips = clips.Where(c => c.CategoryId == cateId).ToList();
             }
-            
             var categories = await _repo.CategoryRepo.GetAllCategoriesAsync();
             ViewBag.categories = categories;
-
             return View(clips);
         }
 

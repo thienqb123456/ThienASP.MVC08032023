@@ -12,9 +12,9 @@
 <h1 class="text-primary"> Clip : @Model.Name </h1>
 
 <div class="mt-4">
-    <div class="row">
-        <div class="col">
-            <div >
+    <div >
+        <div >
+            <div class="row" >
                 <iframe class="col-sm-12 col-lg-12 " width="1280" height="720" src="https://www.youtube.com/embed/@Model.Url"
                         title="YouTube video player" frameborder="0" allow="accelerometer;
                             autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;
@@ -43,11 +43,11 @@
                 <p class="card-text "> Description : <strong class="text-warning">@Model.Description</strong>  </p>
             </div>
         </div>
-
+        <hr />
         <div id="comment-section">
             @if (Model.MainComments!.Any() == false )
             {
-                <h5>There's no comment here </h5>
+                <h5>There's no comment here! </h5>
 
             } else
             {
@@ -83,7 +83,6 @@
 
                 }
             }
-
             @if (SignInManager.IsSignedIn(User))
             {
                 await Html.RenderPartialAsync("_MainCommentPartial", new CommentViewModel

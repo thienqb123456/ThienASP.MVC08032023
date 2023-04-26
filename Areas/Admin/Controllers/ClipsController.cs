@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Globalization;
 using ThienASPMVC08032023.Models;
 using ThienASPMVC08032023.Repository.InterfaceRepo;
 using X.PagedList;
@@ -29,9 +30,13 @@ namespace ThienASPMVC08032023.Areas.Admin.Controllers
 
         // GET: Clips
         [HttpGet]
-        public async Task<ActionResult> Index(int? currentPage, int? pageSize)
+        public async Task<ActionResult> Index(string searchString,string sortBy, int? currentPage, int? pageSize)
         {
-            var qrClips = await _repo.ClipRepo.GetAllClipsAsync();
+            var qrClips = await _repo.ClipRepo.GetAllClipsAsync(searchString, sortBy);
+
+            ViewData["SortByName"] = sortBy == "name" ? "name_desc" : "name";
+            ViewData["SortByTimeCreated"] = sortBy == "timeCreated" ? "timeCreated_desc" : "timeCreated";
+
             // paging
             if (currentPage == null)
             {

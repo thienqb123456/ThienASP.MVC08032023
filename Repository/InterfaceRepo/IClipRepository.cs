@@ -4,7 +4,7 @@ namespace ThienASPMVC08032023.Repository.InterfaceRepo
 {
     public interface IClipRepository
     {
-        Task<IEnumerable<Clip>> GetAllClipsAsync();
+        Task<IEnumerable<Clip>> GetAllClipsAsync(string searchString, string sortBy);
         Task<Clip> GetClipByIdAsync(int clipId);
 
         void CreateClip(Clip clip);

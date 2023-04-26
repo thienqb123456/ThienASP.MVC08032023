@@ -11,13 +11,40 @@ namespace ThienASPMVC08032023.Repository.Repo
         {
         }
 
-        public async Task<IEnumerable<Clip>> GetAllClipsAsync()
+        public async Task<IEnumerable<Clip>> GetAllClipsAsync(string searchString, string sortBy)
         {
-            return await FindAll().Include(cl => cl.AuthorUser)
+            var clipsQr = FindAll().Include(cl => cl.AuthorUser)
                                   .Include(cl => cl.Category)
-                                  .Include(cl=> cl.MainComments)
+                                  .Include(cl => cl.MainComments)
                                   .OrderByDescending(cl => cl.TimeCreated)
-                                  .ToListAsync();
+                                  .AsQueryable();
+            if(!string.IsNullOrEmpty(searchString))
+            {
+                clipsQr = clipsQr.Where(cl => cl.Name!.Contains(searchString)
+                                  ||cl.Description!.Contains(searchString) 
+                                  ||cl.Category!.Name!.Contains(searchString));
+            }
+
+            if(!string.IsNullOrEmpty(sortBy))
+            {
+                switch(sortBy)
+                {
+                    case "name":
+                        clipsQr = clipsQr.OrderBy(cl => cl.Name);
+                        break;
+                    case "name_desc":
+                        clipsQr = clipsQr.OrderByDescending(cl => cl.Name);
+                        break;
+                    case "timeCreated":
+                        clipsQr = clipsQr.OrderBy(cl => cl.TimeCreated);
+                        break;
+                    default:
+                        clipsQr = clipsQr.OrderByDescending(cl => cl.TimeCreated);
+                        break;
+                }
+            }
+
+            return await clipsQr.ToListAsync();
         }
 
         public async Task<Clip> GetClipByIdAsync(int clipId)
