@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using ThienASPMVC08032023.Database;
 using ThienASPMVC08032023.Repository.InterfaceRepo;
 
@@ -15,12 +16,12 @@ namespace ThienASPMVC08032023.Repository.Repo
 
         public IQueryable<T> FindAll()
         {
-            return _context.Set<T>();
+            return _context.Set<T>().AsNoTracking();
         }
 
         public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression)
         {
-            return _context.Set<T>().Where(expression);
+            return _context.Set<T>().Where(expression).AsNoTracking();
 
         }
 
